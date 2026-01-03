@@ -156,11 +156,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 STATIC_URL = '/static/'
 
-# Where Django will collect static files
-STATIC_ROOT = BASE_DIR / 'staticfiles'
-
-# Where Django will look for additional static files
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
 
+STATIC_ROOT = BASE_DIR / 'staticfiles'
