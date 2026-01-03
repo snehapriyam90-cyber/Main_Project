@@ -1,0 +1,115 @@
+{% extends "customer_dashboard.html" %}
+{% block content %}
+
+<div class="container py-4">
+
+    <h3 class="fw-bold text-success mb-4">
+        <i class="bi bi-heart-fill"></i> My Wishlist
+    </h3>
+
+    {% if wishlist_items %}
+    <div class="row g-4">
+        {% for item in wishlist_items %}
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm border-0 wishlist-card">
+
+                {% if item.product.image %}
+                <img src="{{ item.product.image.url }}"
+                     class="card-img-top"
+                     style="height:250px; object-fit:cover; border-top-left-radius: 0.5rem; border-top-right-radius: 0.5rem;">
+                {% else %}
+                <img src="https://via.placeholder.com/300x180?text=No+Image"
+                     class="card-img-top"
+                     style="border-top-left-radius: 0.5rem; border-top-right-radius: 0.5rem;">
+                {% endif %}
+
+                <div class="card-body d-flex flex-column">
+                    <h6 class="fw-semibold mb-2">{{ item.product.name }}</h6>
+                    <p class="text-success fw-bold mb-3">
+                        ₹ {{ item.product.discounted_price|floatformat:2 }}
+                    </p>
+
+                    <div class="mt-auto d-flex gap-2">
+                        <a href="{% url 'product_detail' item.product.id %}"
+                           class="btn btn-success btn-sm flex-grow-1 text-white">
+                            <i class="bi bi-eye"></i> View
+                        </a>
+
+                        <a href="{% url 'remove_from_wishlist' item.id %}"
+                           class="btn btn-outline-danger btn-sm" title="Remove">
+                            <i class="bi bi-trash"></i>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% else %}
+        <div class="text-center text-muted py-5">
+            <i class="bi bi-heart fs-1 mb-2"></i>
+            <p class="mt-3">Your wishlist is empty</p>
+        </div>
+    {% endif %}
+
+</div>
+
+<style>
+/* Wishlist Cards */
+.wishlist-card {
+    border-radius: 0.5rem;
+    transition: all 0.3s ease;
+    overflow: hidden;
+    background-color: #ffffff;
+}
+
+.wishlist-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+}
+
+/* Card Titles & Price */
+.wishlist-card h6 {
+    font-size: 1rem;
+    line-height: 1.2rem;
+}
+
+.wishlist-card p {
+    font-size: 0.95rem;
+    margin-bottom: 0.5rem;
+}
+
+/* Buttons */
+.wishlist-card .btn-sm {
+    font-size: 0.85rem;
+    padding: 0.35rem 0.5rem;
+}
+
+.wishlist-card .btn-success {
+    background-color: #28a745;
+    border-color: #28a745;
+}
+
+.wishlist-card .btn-success:hover {
+    background-color: #218838;
+    border-color: #1e7e34;
+}
+
+.wishlist-card .btn-outline-danger {
+    border-color: #dc3545;
+    color: #dc3545;
+}
+
+.wishlist-card .btn-outline-danger:hover {
+    background-color: #dc3545;
+    color: #fff;
+}
+
+.text-success {
+    color: #28a745 !important;
+}
+</style>
+
+{% endblock %}

@@ -1,0 +1,163 @@
+{% extends "customer_dashboard.html" %}
+{% block content %}
+
+<style>
+/* PAGE BACKGROUND */
+.product-page {
+    background: #f1f8f4;
+    padding: 20px;
+    border-radius: 16px;
+}
+
+/* FILTER BAR */
+.filter-bar {
+    background: white;
+    padding: 16px;
+    border-radius: 14px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    margin-bottom: 25px;
+}
+
+/* BUTTONS */
+.btn-apply {
+    background: linear-gradient(135deg, #2e7d32, #43a047);
+    color: white;
+    font-weight: 600;
+    border-radius: 10px;
+    font-size: 14px;
+}
+
+.btn-apply:hover {
+    background: #1b5e20;
+}
+
+.btn-clear {
+    background: white;
+    color: #2e7d32;
+    border: 2px solid #2e7d32;
+    font-weight: 600;
+    border-radius: 10px;
+    font-size: 14px;
+}
+
+.btn-clear:hover {
+    background: #2e7d32;
+    color: white;
+}
+
+/* PRODUCT CARD */
+.product-card {
+    border: none;
+    border-radius: 18px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+}
+
+.product-card img {
+    border-radius: 18px 18px 0 0;
+    height: 200px;
+    object-fit: cover;
+}
+
+.price {
+    color: #2e7d32;
+    font-weight: 700;
+    font-size: 18px;
+}
+</style>
+
+<div class="product-page">
+
+    <!-- PAGE TITLE -->
+    <h3 class="fw-bold text-success mb-4 text-center">
+         Products
+    </h3>
+
+    <!-- FILTER BAR -->
+    <div class="filter-bar">
+        <form method="GET">
+            <div class="row g-2 align-items-end">
+
+                <div class="col-md-3">
+                    <input type="text" name="q" class="form-control"
+                           placeholder="Search products..."
+                           value="{{ request.GET.q }}">
+                </div>
+
+                <div class="col-md-2">
+                    <select name="category" class="form-select">
+                        <option value="">All Categories</option>
+                        <option value="fruits" {% if request.GET.category == 'fruits' %}selected{% endif %}>Fruits</option>
+                        <option value="vegetables" {% if request.GET.category == 'vegetables' %}selected{% endif %}>Vegetables</option>
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <select name="sort" class="form-select">
+                        <option value="">Sort</option>
+                        <option value="recent" {% if request.GET.sort == 'recent' %}selected{% endif %}>Newest</option>
+                        <option value="price_low" {% if request.GET.sort == 'price_low' %}selected{% endif %}>Price ↑</option>
+                        <option value="price_high" {% if request.GET.sort == 'price_high' %}selected{% endif %}>Price ↓</option>
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <div class="form-check mt-2">
+                        <input class="form-check-input" type="checkbox" name="in_stock"
+                               {% if request.GET.in_stock %}checked{% endif %}>
+                        <label class="form-check-label">In Stock</label>
+                    </div>
+                </div>
+
+                <div class="col-md-3 d-flex gap-2">
+                    <button type="submit" class="btn btn-apply w-100">
+                         Apply
+                    </button>
+                    <a href="{% url 'product_list' %}" class="btn btn-clear w-100">
+                        Clear
+                    </a>
+                </div>
+
+            </div>
+        </form>
+    </div>
+
+    <!-- PRODUCTS -->
+    <div class="row">
+        {% for p in products %}
+        <div class="col-md-4 mb-4">
+            <div class="card product-card">
+
+                {% if p.image %}
+                    <img src="{{ p.image.url }}" alt="{{ p.name }}">
+                {% else %}
+                    <img src="https://via.placeholder.com/400x200?text=No+Image">
+                {% endif %}
+
+                <div class="card-body">
+                    <h5 class="fw-bold">{{ p.name }}</h5>
+                    <p class="text-muted small">{{ p.category|title }}</p>
+                    <p class="price">₹ {{ p.price }}</p>
+
+                    <a href="{% url 'product_detail' p.id %}"
+                       class="btn btn-success btn-sm w-100">
+                        View Details
+                    </a>
+                </div>
+
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center text-muted">
+            No products found.
+        </div>
+        {% endfor %}
+    </div>
+
+</div>
+
+{% endblock %}

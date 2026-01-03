@@ -1,0 +1,125 @@
+{% extends "customer_dashboard.html" %}
+{% block content %}
+
+<div class="container my-5 d-flex justify-content-center">
+
+    <div class="payment-wrapper shadow-lg">
+
+        <!-- HEADER -->
+        <div class="payment-header text-center">
+            <i class="bi bi-shield-lock-fill"></i>
+            <h4 class="fw-bold mt-2">Secure Payment</h4>
+            <p class="small text-muted mb-0">
+                100% safe & encrypted payments powered by Razorpay
+            </p>
+        </div>
+
+        <!-- BODY -->
+        <div class="payment-body">
+
+            <div class="order-info mb-4">
+                <div class="d-flex justify-content-between">
+                    <span class="text-muted">Order ID</span>
+                    <span class="fw-semibold">#{{ order.id }}</span>
+                </div>
+
+                <div class="d-flex justify-content-between mt-2">
+                    <span class="text-muted">Payment Method</span>
+                    <span class="fw-semibold text-success">Online Payment</span>
+                </div>
+            </div>
+
+            <div class="amount-box text-center mb-4">
+                <span class="text-muted small">Total Payable</span>
+                <h2 class="fw-bold text-success">
+                    ₹ {{ order.total_amount|floatformat:2 }}
+                </h2>
+            </div>
+
+            <button id="rzp-button" class="btn btn-success btn-lg w-100 fw-bold">
+                <i class="bi bi-credit-card-2-front-fill me-2"></i>
+                Pay Securely
+            </button>
+
+            <p class="small text-muted text-center mt-3">
+                By continuing, you agree to our
+                <span class="fw-semibold">Terms & Privacy Policy</span>
+            </p>
+
+        </div>
+    </div>
+</div>
+
+<!-- RAZORPAY SCRIPT -->
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<script>
+var options = {
+    "key": "{{ razorpay_key }}",
+    "amount": "{{ order.total_amount|floatformat:2|floatformat:0|add:'0' }}",
+    "currency": "INR",
+    "name": "Organic Store",
+    "description": "Order #{{ order.id }}",
+    "order_id": "{{ razorpay_order.id }}",
+    "handler": function (response){
+        window.location.href = "{% url 'order_success' order.id %}";
+    },
+    "theme": {
+        "color": "#28a745"
+    }
+};
+
+var rzp = new Razorpay(options);
+
+document.getElementById('rzp-button').onclick = function(e){
+    rzp.open();
+    e.preventDefault();
+}
+</script>
+
+<!-- PREMIUM STYLING -->
+<style>
+.payment-wrapper {
+    width: 100%;
+    max-width: 420px;
+    border-radius: 18px;
+    background: #ffffff;
+    overflow: hidden;
+}
+
+.payment-header {
+    background: linear-gradient(135deg, #28a745, #1e7e34);
+    color: white;
+    padding: 28px 20px;
+}
+
+.payment-header i {
+    font-size: 2.5rem;
+}
+
+.payment-body {
+    padding: 30px 25px;
+}
+
+.order-info {
+    font-size: 0.95rem;
+}
+
+.amount-box {
+    background: #f4fff7;
+    padding: 18px;
+    border-radius: 14px;
+}
+
+.btn-success {
+    border-radius: 14px;
+    padding: 14px;
+    font-size: 1.1rem;
+}
+
+.btn-success:hover {
+    background-color: #218838;
+}
+</style>
+
+{% endblock %}

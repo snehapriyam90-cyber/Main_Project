@@ -1,0 +1,616 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% block extra_head %}
+    <meta charset="UTF-8">
+    <title>Kisan Fresh</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Poppins:wght@400;500&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            margin: 0;
+            background-color: #f8f9fa;
+        }
+
+        /* ================= TOP BORDER ================= */
+
+        .top-green-line {
+            height: 38px;
+            background-color: #117428;
+        }
+        
+
+        /* ================= NAVBAR ================= */
+        .navbar-box {
+            background-color: #ffffff;
+            padding: 22px 50px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            position: relative;
+            z-index: 1000;
+        }
+        
+        .brand h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 36px;
+            color: #2e7d32;
+            margin: 0;
+        }
+
+        .brand p {
+            margin: 0;
+            font-size: 14px;
+            color: #6b8f71;
+        }
+
+        .leaf {
+            color: #7cb342;
+            margin: 0 2px;
+        }
+
+        .nav-center a {
+            margin: 0 22px;
+            font-size: 24px;
+            font-weight: 600;
+            text-decoration: none;
+            color: #333;
+            position: relative;
+        }
+
+        .nav-center a:hover {
+            color: #198754;
+        }
+
+        .user-menu {
+            position: relative;
+        }
+
+        .user-icon {
+            font-size: 34px;
+            color: #198754;
+            cursor: pointer;
+        }
+
+        .dropdown-box {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 45px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.18);
+            overflow: hidden;
+            min-width: 180px;
+            z-index: 1100;
+        }
+
+        .dropdown-box a {
+            display: block;
+            padding: 14px 20px;
+            font-size: 16px;
+            text-decoration: none;
+            color: #333;
+        }
+
+        .dropdown-box a:hover {
+            background-color: #198754;
+            color: white;
+        }
+
+        .user-menu:hover .dropdown-box {
+            display: block;
+        }
+
+/* ================= CAROUSEL ================= */
+.carousel-item {
+    height: 520px;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+}
+
+.carousel-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+}
+
+.carousel-content {
+    position: relative;
+    z-index: 2;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.carousel-caption-custom {
+    animation: fadeUp 1.2s ease forwards;
+}
+
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.carousel-content h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 54px;
+    color: #e5fbe9;
+    margin-bottom: 10px;
+}
+
+.carousel-content p {
+    font-family: 'Poppins', sans-serif;
+    font-size: 22px;
+    color: #f1f1f1;
+}
+
+/* Indicators styling */
+.carousel-indicators [data-bs-target] {
+    background-color: #c7e9d4;
+}
+
+.carousel-indicators .active {
+    background-color: #198754;
+}
+
+        /* ================= WELCOME SECTION ================= */
+        .welcome-section {
+            background-color: #fbf9f3;
+            padding: 90px 0 120px;
+        }
+
+        .welcome-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 44px;
+            color: #7aa93c;
+            margin-bottom: 12px;
+        }
+
+        .welcome-subtitle {
+            font-family: 'Poppins', sans-serif;
+            font-size: 17px;
+            font-style: italic;
+            color: #555;
+            max-width: 780px;
+            margin: auto;
+        }
+
+        .feature-box i {
+            font-size: 38px;
+            color: #7aa93c;
+        }
+
+        .feature-box h5 {
+            margin-top: 12px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .feature-box p {
+            font-size: 15px;
+            color: #555;
+        }
+
+        .story-card {
+            background: #3ea66b;
+            color: #ffffff;
+            padding: 55px 35px 95px;
+            position: relative;
+            border-radius: 6px;
+        }
+
+        .story-card h4 {
+            font-size: 26px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .story-card p {
+            font-size: 15px;
+            line-height: 1.7;
+        }
+
+        .eco-badge {
+            position: absolute;
+            top: -38px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #ffffff;
+            color: #3ea66b;
+            padding: 14px 24px;
+            border-radius: 50%;
+            font-weight: bold;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+        }
+
+        .story-image {
+            width: 240px;
+            position: absolute;
+            bottom: -95px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        /* ================= FOOTER ================= */
+.footer-section {
+    background: linear-gradient(135deg, #117428, #1e8f4a);
+    color: #eaf7ee;
+    font-family: 'Poppins', sans-serif;
+}
+
+.footer-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px;
+    color: #ffffff;
+}
+
+.footer-heading {
+    font-size: 18px;
+    margin-bottom: 12px;
+    color: #d4f5dc;
+}
+
+.footer-text {
+    font-size: 14px;
+    color: #eaf7ee;
+}
+
+.footer-links {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-links li {
+    margin-bottom: 8px;
+}
+
+.footer-links a {
+    color: #eaf7ee;
+    text-decoration: none;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.footer-links a:hover {
+    color: #ffffff;
+    padding-left: 5px;
+}
+
+.footer-bottom {
+    background-color: #0e5f22;
+    font-size: 14px;
+    color: #dff5e5;
+}
+/* ================= RESPONSIVE FIXES ================= */
+
+/* Tablets & below */
+@media (max-width: 992px) {
+
+    .navbar-box {
+        flex-direction: column;
+        padding: 15px 20px;
+        text-align: center;
+    }
+
+    .nav-center {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        margin-top: 10px;
+    }
+
+    .nav-center a {
+        font-size: 18px;
+        margin: 8px 12px;
+    }
+
+    .brand h1 {
+        font-size: 28px;
+    }
+
+    .user-menu {
+        margin-top: 12px;
+    }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+
+    /* Navbar */
+    .navbar-box {
+        padding: 12px 15px;
+    }
+
+    .nav-center {
+        flex-direction: column;
+    }
+
+    .nav-center a {
+        font-size: 16px;
+        margin: 6px 0;
+    }
+
+    /* Carousel */
+    .carousel-item {
+        height: 320px;
+    }
+
+    .carousel-content h2 {
+        font-size: 28px;
+    }
+
+    .carousel-content p {
+        font-size: 15px;
+    }
+
+    /* Welcome Section */
+    .welcome-section {
+        padding: 60px 15px;
+    }
+
+    .welcome-title {
+        font-size: 28px;
+    }
+
+    /* Story image fix */
+    .story-image {
+        position: static;
+        transform: none;
+        margin-top: 20px;
+        width: 180px;
+    }
+}
+
+/* Very small devices */
+@media (max-width: 480px) {
+
+    .brand h1 {
+        font-size: 24px;
+    }
+
+    .carousel-content h2 {
+        font-size: 24px;
+    }
+
+    .carousel-content p {
+        font-size: 14px;
+    }
+}
+
+    </style>
+{% endblock %}
+</head>
+
+<body>
+
+<div class="top-green-line"></div>
+
+<!-- ================= NAVBAR ================= -->
+<div class="navbar-box">
+    <div class="brand">
+        <h1>K<span class="leaf"><i class="bi bi-leaf-fill"></i></span>san Fresh</h1>
+        <p>Fresh from Farmers to You</p>
+    </div>
+
+    <div class="nav-center">
+        <a href="{% url 'home' %}">Home</a>
+        <a href="{% url 'home_product_list' %}">Products</a>
+        <a href="{% url 'about' %}">About</a>
+        <a href="{% url 'blog_list' %}">Blogs</a>
+        <a href="{% url 'contact' %}">Contact</a>
+    </div>
+
+    <div class="user-menu">
+        <i class="bi bi-person-circle user-icon"></i>
+        <div class="dropdown-box">
+            <a href="{% url 'customer_register' %}">Register</a>
+            <a href="{% url 'customer_login' %}">Login</a>
+        </div>
+    </div>
+</div>
+{% block content %}
+<!-- ================= CAROUSEL ================= -->
+<div id="kisanCarousel"
+     class="carousel carousel-fade slide"
+     data-bs-ride="carousel"
+     data-bs-interval="2000"
+     data-bs-pause="hover">
+
+    <!-- Indicators -->
+    <div class="carousel-indicators">
+        <button type="button" data-bs-target="#kisanCarousel" data-bs-slide-to="0" class="active"></button>
+        <button type="button" data-bs-target="#kisanCarousel" data-bs-slide-to="1"></button>
+        <button type="button" data-bs-target="#kisanCarousel" data-bs-slide-to="2"></button>
+        <button type="button" data-bs-target="#kisanCarousel" data-bs-slide-to="3"></button>
+    </div>
+
+    <div class="carousel-inner">
+
+        <!-- Slide 1 -->
+        <div class="carousel-item active"
+             style="background-image:url('https://static.vecteezy.com/system/resources/previews/054/417/824/non_2x/farmers-harvesting-fresh-vegetables-in-a-sunlit-field-during-late-afternoon-free-photo.jpeg');">
+            <div class="carousel-overlay"></div>
+            <div class="carousel-content">
+                <div class="carousel-caption-custom">
+                    <h2>Fresh Fruits & Vegetables</h2>
+                    <p>Directly sourced from farmers to ensure purity and freshness.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 2 -->
+        <div class="carousel-item"
+             style="background-image:url('https://t3.ftcdn.net/jpg/18/06/96/42/360_F_1806964282_nKp7h8ws1QjT6UFqaYmBlDm9rgaByddc.jpg');">
+            <div class="carousel-overlay"></div>
+            <div class="carousel-content">
+                <div class="carousel-caption-custom">
+                    <h2>Seasonal Fresh Fruits</h2>
+                    <p>Handpicked fruits packed with natural sweetness and nutrition.</p>  
+                </div>              
+            </div>
+        </div>
+
+        <!-- Slide 3 -->
+        <div class="carousel-item"
+             style="background-image:url('https://thumbs.dreamstime.com/b/colorful-vegetables-dynamic-water-splash-ai-generated-image-colorful-vegetables-dynamic-water-splash-420165951.jpg');">
+            <div class="carousel-overlay"></div>
+            <div class="carousel-content">
+                <div class="carousel-caption-custom">
+                    <h2>Daily Harvest Promise</h2>
+                    <p>Picked every morning to preserve nutrition and taste.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4 -->
+        <div class="carousel-item"
+             style="background-image:url('https://thumbs.dreamstime.com/b/farmer-harvests-fresh-organic-vegetables-sunset-lush-green-field-showcasing-vibrant-produce-wooden-crate-proudly-carries-338106250.jpg');">
+            <div class="carousel-overlay"></div>
+            <div class="carousel-content">
+                <div class="carousel-caption-custom">
+                    <h2>Farm to Home</h2>
+                    <p>Bridging farmers and families with trust and freshness.</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Controls -->
+    <button class="carousel-control-prev" type="button" data-bs-target="#kisanCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon"></span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#kisanCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon"></span>
+    </button>
+
+</div>
+
+
+<!-- ================= WELCOME SECTION ================= -->
+<section class="welcome-section">
+    <div class="container text-center">
+
+        <h2 class="welcome-title">Welcome To Kisan Fresh</h2>
+        <p class="welcome-subtitle">
+            Where freshness meets trust — delivering farm goodness to your home.
+        </p>
+
+        <div class="row align-items-center mt-5">
+
+            <div class="col-md-4">
+                <div class="feature-box">
+                    <i class="bi bi-leaf-fill"></i>
+                    <h5>Always Fresh</h5>
+                    <p>Carefully harvested and delivered with freshness intact.</p>
+                </div>
+
+                <div class="feature-box mt-4">
+                    <i class="bi bi-heart-pulse-fill text-danger"></i>
+                    <h5>Super Healthy</h5>
+                    <p>Nutritious produce for your family’s wellbeing.</p>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <!-- Replaced Story Card with Image -->
+                <img src="https://cdn.vectorstock.com/i/500p/35/80/horticulture-logo-farmer-with-basket-vector-6723580.avif" alt="Kisan Fresh Image" 
+                class="img-fluid rounded shadow">
+            </div>
+
+            <div class="col-md-4">
+                <div class="feature-box">
+                    <span style="font-size:38px;">🌱</span>
+                    <h5>100% Natural</h5>
+                    <p>No chemicals, no artificial ripening.</p>
+                </div>
+
+                <div class="feature-box mt-4">
+                <span style="font-size:38px;">🏅</span>                    
+                <h5>Premium Quality</h5>
+                <p>Only the best produce reaches your plate.</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+<!-- ================= FOOTER ================= -->
+<footer class="footer-section mt-5">
+    <div class="container">
+        <div class="row py-5">
+
+            <!-- Brand -->
+            <div class="col-md-4 mb-4">
+                <h3 class="footer-title">Kisan Fresh</h3>
+                <p class="footer-text">
+                    Fresh fruits and vegetables directly from farmers to your home.
+                    Quality, trust and freshness guaranteed.
+                </p>
+            </div>
+
+            <!-- Quick Links -->
+            <div class="col-md-2 mb-4">
+                <h5 class="footer-heading">Quick Links</h5>
+                <ul class="footer-links">
+                    <li><a href="{% url 'global_search' %}">Search</a></li>
+                    <li><a href="{% url 'product_list' %}">Products</a></li>
+                    <li><a href="{% url 'about' %}">About</a></li>
+                </ul>
+            </div>
+
+            <!-- Policies -->
+            <div class="col-md-3 mb-4">
+                <h5 class="footer-heading">Policies</h5>
+                <ul class="footer-links">
+                    <li><a href="{% url 'privacy_policy' %}">Privacy Policy</a></li>
+                    <li><a href="{% url 'refund_policy' %}">Refund Policy</a></li>
+                    <li><a href="{% url 'terms_conditions' %}">Terms & Conditions</a></li>
+                </ul>
+            </div>
+
+            <!-- Contact / Info -->
+            <div class="col-md-3 mb-4">
+                <h5 class="footer-heading">Contact</h5>
+                <p class="footer-text mb-1">📍 Kochi, Kerala, India</p>
+                <p class="footer-text mb-1">📧 support@kisanfresh.com</p>
+                <p class="footer-text">📞 +91 6238073192</p>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Copyright -->
+    <div class="footer-bottom text-center py-3">
+        © {% now "Y" %} <strong>Kisan Fresh</strong>. All Rights Reserved.
+    </div>
+</footer>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

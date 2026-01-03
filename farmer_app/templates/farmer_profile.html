@@ -1,0 +1,278 @@
+{% extends "farmer_dashboard.html" %}
+{% block content %}
+<style>
+    /* ===== PROFILE FORM STYLING ===== */
+.profile-card {
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(8px);
+    border-radius: 18px;
+    padding: 35px;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+}
+
+.section-title {
+    font-weight: 700;
+    color: #2e7d32;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.section-title span {
+    background: #e8f5e9;
+    padding: 6px 14px;
+    border-radius: 30px;
+    font-size: 14px;
+}
+
+.form-control, select {
+    border-radius: 14px;
+    padding: 12px 14px;
+    border: 1.5px solid #c8e6c9;
+    transition: 0.3s;
+}
+
+.form-control:focus, select:focus {
+    border-color: #43a047;
+    box-shadow: 0 0 0 3px rgba(67,160,71,0.15);
+}
+
+.form-check-input {
+    transform: scale(1.2);
+    cursor: pointer;
+}
+
+.form-label {
+    font-weight: 600;
+    color: #33691e;
+}
+
+.divider {
+    border-top: 1px dashed #c8e6c9;
+    margin: 30px 0;
+}
+
+.btn-save {
+    background: linear-gradient(135deg, #2e7d32, #66bb6a);
+    border: none;
+    padding: 14px 40px;
+    border-radius: 30px;
+    font-weight: 700;
+    font-size: 16px;
+    color: white;
+    transition: 0.3s;
+}
+
+.btn-save:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(46,125,50,0.3);
+}
+
+</style>
+<div class="content">
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+    <div class="profile-card">
+
+        <h3 class="section-title">
+            My Profile
+            <span>Complete your details</span>
+        </h3>
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <!-- PERSONAL DETAILS -->
+            <h6 class="section-title">🧍 Personal Details</h6>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Full Name</label>
+                    {{ form.full_name }}
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Phone</label>
+                    {{ form.phone }}
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Alternate Phone</label>
+                    {{ form.alternate_phone }}
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Email</label>
+                    {{ form.email }}
+                </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <!-- FARM DETAILS -->
+            <h6 class="section-title">🌾 Farm Details</h6>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Farm Name</label>
+                    {{ form.farm_name }}
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Farm Type</label>
+                    {{ form.farm_type }}
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Experience (Years)</label>
+                    {{ form.years_of_experience }}
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Working Days</label>
+                    {{ form.working_days }}
+                </div>
+                <div class="col-12 mb-3">
+                    <label class="form-label">Farm Description</label>
+                    {{ form.farm_description }}
+                </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <!-- LOCATION -->
+            <h6 class="section-title">📍 Location</h6>
+            <div class="row">
+                <div class="col-12 mb-3">
+                    <label class="form-label">Address</label>
+                    {{ form.address }}
+                </div>
+                
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">State</label>
+                    {{ form.state }}
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">District</label>
+                    {{ form.district }}
+                </div>
+                <div class="col-md-5 mb-2">
+                    <label class="form-label">Pincode</label>
+                    {{ form.pincode }}
+                </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <!-- DELIVERY -->
+            <h6 class="section-title">🚚 Delivery</h6>
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Home Delivery</label>
+                    {{ form.delivers_to_home }}
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Delivery Radius (KM)</label>
+                    {{ form.delivery_radius_km }}
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Delivery Charges</label>
+                    {{ form.delivery_charges }}
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Min Order Amount</label>
+                    {{ form.min_order_amount }}
+                </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <!-- BANK -->
+            <h6 class="section-title">🏦 Bank Details</h6>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Account Holder</label>
+                    {{ form.bank_account_holder }}
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Bank Name</label>
+                    {{ form.bank_name }}
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Account Number</label>
+                    {{ form.account_number }}
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">IFSC Code</label>
+                    {{ form.ifsc_code }}
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">UPI ID</label>
+                    {{ form.upi_id }}
+                </div>
+            </div>
+
+            <div class="text-end mt-4">
+                <button type="submit" class="btn-save">
+                    💾 Save Profile
+                </button>
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
+<script>
+// India states and districts
+const stateDistricts = {
+  "Andhra Pradesh": ["Anantapur","Chittoor","East Godavari","Guntur","Kadapa","Krishna","Kurnool","Nellore","Prakasam","Srikakulam","Visakhapatnam","Vizianagaram","West Godavari"],
+  "Arunachal Pradesh": ["Tawang","West Kameng","East Kameng","Papum Pare","Lower Subansiri","Upper Subansiri","West Siang","East Siang","Upper Siang","Lower Siang","Lower Dibang Valley","Dibang Valley","Anjaw","Lohit","Namsai","Changlang","Tirap","Longding"],
+  "Assam": ["Baksa","Barpeta","Biswanath","Bongaigaon","Cachar","Charaideo","Chirang","Darrang","Dhemaji","Dhubri","Dibrugarh","Dima Hasao","Goalpara","Golaghat","Hailakandi","Hojai","Jorhat","Kamrup","Kamrup Metropolitan","Karbi Anglong","Karimganj","Kokrajhar","Lakhimpur","Majuli","Morigaon","Nagaon","Nalbari","Sivasagar","Sonitpur","South Salmara","Tinsukia","Udalguri","West Karbi Anglong"],
+  "Bihar": ["Araria","Arwal","Aurangabad","Banka","Begusarai","Bhagalpur","Bhojpur","Buxar","Darbhanga","East Champaran","Gaya","Gopalganj","Jamui","Jehanabad","Kaimur","Katihar","Khagaria","Kishanganj","Lakhisarai","Madhepura","Madhubani","Munger","Muzaffarpur","Nalanda","Nawada","Patna","Purnia","Rohtas","Saharsa","Samastipur","Saran","Sheikhpura","Sheohar","Sitamarhi","Siwan","Supaul","Vaishali","West Champaran"],
+  "Chhattisgarh": ["Balod","Baloda Bazar","Balrampur","Bastar","Bemetara","Bijapur","Bilaspur","Dantewada","Dhamtari","Durg","Gariaband","Gaurela-Pendra-Marwahi","Janjgir-Champa","Jashpur","Kabirdham","Kanker","Kondagaon","Korba","Koriya","Mahasamund","Mungeli","Narayanpur","Raigarh","Raipur","Rajnandgaon","Sukma","Surajpur","Surguja"],
+  "Goa": ["North Goa","South Goa"],
+  "Gujarat": ["Ahmedabad","Amreli","Anand","Aravalli","Banaskantha","Bharuch","Bhavnagar","Botad","Chhota Udaipur","Dahod","Dang","Devbhoomi Dwarka","Gandhinagar","Gir Somnath","Jamnagar","Junagadh","Kheda","Kutch","Mahisagar","Mehsana","Morbi","Narmada","Navsari","Panchmahal","Patan","Porbandar","Rajkot","Sabarkantha","Surat","Surendranagar","Tapi","Vadodara","Valsad"],
+  "Haryana": ["Ambala","Bhiwani","Charkhi Dadri","Faridabad","Fatehabad","Gurugram","Hisar","Jhajjar","Jind","Kaithal","Karnal","Kurukshetra","Mahendragarh","Nuh","Palwal","Panchkula","Panipat","Rewari","Rohtak","Sirsa","Sonipat","Yamunanagar"],
+  "Himachal Pradesh": ["Bilaspur","Chamba","Hamirpur","Kangra","Kinnaur","Kullu","Lahaul and Spiti","Mandi","Shimla","Sirmaur","Solan","Una"],
+  "Jharkhand": ["Bokaro","Chatra","Deoghar","Dhanbad","Dumka","East Singhbhum","Garhwa","Giridih","Godda","Gumla","Hazaribagh","Jamtara","Khunti","Koderma","Latehar","Lohardaga","Pakur","Palamu","Ramgarh","Ranchi","Sahebganj","Seraikela Kharsawan","Simdega","West Singhbhum"],
+  "Karnataka": ["Bagalkot","Ballari","Belagavi","Bengaluru Rural","Bengaluru Urban","Bidar","Chamarajanagar","Chikkaballapur","Chikkamagaluru","Chitradurga","Dakshina Kannada","Davangere","Dharwad","Gadag","Hassan","Haveri","Kalaburagi","Kodagu","Kolar","Koppal","Mandya","Mysuru","Raichur","Ramanagara","Shivamogga","Tumakuru","Udupi","Uttara Kannada","Vijayanagara","Yadgir"],
+  "Kerala": ["Alappuzha","Ernakulam","Idukki","Kannur","Kasaragod","Kollam","Kottayam","Kozhikode","Malappuram","Palakkad","Pathanamthitta","Thiruvananthapuram","Thrissur","Wayanad"],
+  "Madhya Pradesh": ["Agar Malwa","Alirajpur","Anuppur","Ashoknagar","Balaghat","Barwani","Betul","Bhind","Bhopal","Burhanpur","Chhatarpur","Chhindwara","Damoh","Datia","Dewas","Dhar","Dindori","Guna","Gwalior","Harda","Hoshangabad","Indore","Jabalpur","Jhabua","Katni","Khandwa","Khargone","Mandla","Mandsaur","Morena","Narsinghpur","Neemuch","Panna","Raisen","Rajgarh","Ratlam","Rewa","Sagar","Satna","Sehore","Seoni","Shahdol","Shajapur","Sheopur","Shivpuri","Sidhi","Singrauli","Tikamgarh","Ujjain","Umaria","Vidisha"],
+  "Maharashtra": ["Ahmednagar","Akola","Amravati","Aurangabad","Beed","Bhandara","Buldhana","Chandrapur","Dhule","Gadchiroli","Gondia","Hingoli","Jalgaon","Jalna","Kolhapur","Latur","Mumbai City","Mumbai Suburban","Nagpur","Nanded","Nandurbar","Nashik","Osmanabad","Palghar","Parbhani","Pune","Raigad","Ratnagiri","Sangli","Satara","Sindhudurg","Solapur","Thane","Wardha","Washim","Yavatmal"],
+  "Odisha": ["Angul","Balangir","Balasore","Bargarh","Bhadrak","Boudh","Cuttack","Deogarh","Dhenkanal","Gajapati","Ganjam","Jagatsinghpur","Jajpur","Jharsuguda","Kalahandi","Kandhamal","Kendrapara","Kendujhar","Khordha","Koraput","Malkangiri","Mayurbhanj","Nabarangpur","Nayagarh","Nuapada","Puri","Rayagada","Sambalpur","Subarnapur","Sundargarh"],
+  "Punjab": ["Amritsar","Barnala","Bathinda","Faridkot","Fatehgarh Sahib","Fazilka","Ferozepur","Gurdaspur","Hoshiarpur","Jalandhar","Kapurthala","Ludhiana","Mansa","Moga","Muktsar","Pathankot","Patiala","Rupnagar","Sahibzada Ajit Singh Nagar","Sangrur","Shahid Bhagat Singh Nagar","Sri Muktsar Sahib","Tarn Taran"],
+  "Rajasthan": ["Ajmer","Alwar","Banswara","Baran","Barmer","Bharatpur","Bhilwara","Bikaner","Bundi","Chittorgarh","Churu","Dausa","Dholpur","Dungarpur","Hanumangarh","Jaipur","Jaisalmer","Jalore","Jhalawar","Jhunjhunu","Jodhpur","Karauli","Kota","Nagaur","Pali","Pratapgarh","Rajsamand","Sawai Madhopur","Sikar","Sirohi","Sri Ganganagar","Tonk","Udaipur"],
+  "Tamil Nadu": ["Ariyalur","Chengalpattu","Chennai","Coimbatore","Cuddalore","Dharmapuri","Dindigul","Erode","Kallakurichi","Kanchipuram","Kanniyakumari","Karur","Krishnagiri","Madurai","Mayiladuthurai","Nagapattinam","Namakkal","Nilgiris","Perambalur","Pudukkottai","Ramanathapuram","Ranipet","Salem","Sivaganga","Tenkasi","Thanjavur","Theni","Thoothukudi","Tiruchirappalli","Tirunelveli","Tirupattur","Tiruppur","Tiruvallur","Tiruvannamalai","Tiruvarur","Vellore","Viluppuram","Virudhunagar"],
+  "Telangana": ["Adilabad","Bhadradri Kothagudem","Hyderabad","Jagtial","Jangaon","Jayashankar","Jogulamba","Kamareddy","Karimnagar","Khammam","Mahabubabad","Mahbubnagar","Mancherial","Medak","Medchal","Mulugu","Nagarkurnool","Nalgonda","Narayanpet","Nirmal","Nizamabad","Peddapalli","Rajanna Sircilla","Rangareddy","Sangareddy","Siddipet","Suryapet","Vikarabad","Wanaparthy","Warangal"],
+  "Uttar Pradesh": ["Agra","Aligarh","Ambedkar Nagar","Amethi","Amroha","Auraiya","Ayodhya","Azamgarh","Baghpat","Bahraich","Ballia","Balrampur","Banda","Barabanki","Bareilly","Basti","Bhadohi","Bijnor","Budaun","Bulandshahr","Chandauli","Chitrakoot","Deoria","Etah","Etawah","Farrukhabad","Fatehpur","Firozabad","Gautam Buddha Nagar","Ghaziabad","Ghazipur","Gonda","Gorakhpur","Hamirpur","Hapur","Hardoi","Hathras","Jalaun","Jaunpur","Jhansi","Kannauj","Kanpur Dehat","Kanpur Nagar","Kasganj","Kaushambi","Kheri","Kushinagar","Lalitpur","Lucknow","Maharajganj","Mahoba","Mainpuri","Mathura","Mau","Meerut","Mirzapur","Moradabad","Muzaffarnagar","Pilibhit","Pratapgarh","Prayagraj","Raebareli","Rampur","Saharanpur","Sambhal","Sant Kabir Nagar","Shahjahanpur","Shamli","Shravasti","Siddharthnagar","Sitapur","Sonbhadra","Sultanpur","Unnao","Varanasi"],
+  "Uttarakhand": ["Almora","Bageshwar","Chamoli","Champawat","Dehradun","Haridwar","Nainital","Pauri","Pithoragarh","Rudraprayag","Tehri","Udham Singh Nagar","Uttarkashi"],
+  "West Bengal": ["Alipurduar","Bankura","Birbhum","Cooch Behar","Dakshin Dinajpur","Darjeeling","Hooghly","Howrah","Jalpaiguri","Jhargram","Kalimpong","Kolkata","Malda","Murshidabad","Nadia","North 24 Parganas","Paschim Bardhaman","Paschim Medinipur","Purba Bardhaman","Purba Medinipur","Purulia","South 24 Parganas","Uttar Dinajpur"]
+};
+
+const stateSelect = document.getElementById("id_state");
+const districtSelect = document.getElementById("id_district");
+
+function updateDistricts(selectedDistrict="") {
+    const state = stateSelect.value;
+    districtSelect.innerHTML = '<option value="">Select District</option>';
+    if (stateDistricts[state]) {
+        stateDistricts[state].forEach(district => {
+            const option = document.createElement("option");
+            option.value = district;
+            option.text = district;
+            if (district === selectedDistrict) option.selected = true;
+            districtSelect.appendChild(option);
+        });
+    }
+}
+
+// Trigger on change
+stateSelect.addEventListener("change", () => updateDistricts());
+
+// Preselect saved district
+document.addEventListener("DOMContentLoaded", () => {
+    updateDistricts(districtSelect.value);
+});
+</script>
+
+
+{% endblock %}

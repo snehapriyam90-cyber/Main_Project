@@ -1,0 +1,21 @@
+{% extends "farmer_dashboard.html" %}
+{% block content %}
+<div class="container py-4">
+    <h3>Customer Questions</h3>
+    {% for q in questions %}
+        <div class="p-3 mb-2 bg-light rounded">
+            <strong>{{ q.customer.username }} asked about {{ q.product.name }}:</strong>
+            <p>{{ q.question }}</p>
+
+            <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="question_id" value="{{ q.id }}">
+                <textarea name="answer" rows="2" class="form-control">{% if q.answer %}{{ q.answer }}{% endif %}</textarea>
+                <button type="submit" class="btn btn-success mt-1">Submit Answer</button>
+            </form>
+        </div>
+    {% empty %}
+        <p>No questions yet.</p>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,162 @@
+{% extends "customer_dashboard.html" %}
+{% block content %}
+
+<div class="container py-5 position-relative">
+
+    <!-- BACK BUTTON -->
+    <a href="{% url 'order_history' %}"
+       class="btn btn-outline-success position-absolute top-0 start-0 rounded-pill px-3 py-2">
+        <i class="bi bi-arrow-left"></i> Back
+    </a>
+
+    <!-- HEADER -->
+    <div class="text-center mb-4">
+        <h3 class="fw-bold text-success">
+            Order Summary
+            <span class="text-muted fs-6">#{{ order.id }}</span>
+        </h3>
+        <p class="text-muted">
+            Placed on {{ order.created_at|date:"d M Y, h:i A" }}
+        </p>
+    </div>
+
+    <!-- ORDER INFO -->
+<div class="card shadow-sm border-0 rounded-4 mb-4">
+    <div class="card-body row text-center">
+        
+        <div class="col-md-3">
+            <p class="text-muted mb-1">Payment</p>
+            <p class="fw-semibold">{{ order.payment_method|title }}</p>
+        </div>
+
+        <div class="col-md-3">
+            <p class="text-muted mb-1">Delivery Address</p>
+            <p class="fw-semibold">{{ order.address }}</p>
+        </div>
+
+        <div class="col-md-3">
+            <p class="text-muted mb-1">Email</p>
+            <p class="fw-semibold">{{ order.email }}</p>
+        </div>
+
+        <div class="col-md-3">
+            <p class="text-muted mb-1">Phone</p>
+            <p class="fw-semibold">{{ order.phone }}</p>
+        </div>
+
+    </div>
+</div>
+    <!-- PRODUCTS AS SEPARATE CARDS -->
+    {% for item in items %}
+    <div class="card shadow-sm border-0 rounded-4 mb-3 product-card">
+        <div class="card-body d-flex gap-4 align-items-center">
+
+            <!-- PRODUCT IMAGE -->
+            {% if item.product.image %}
+                <img src="{{ item.product.image.url }}" class="product-img">
+            {% else %}
+                <img src="https://via.placeholder.com/100" class="product-img">
+            {% endif %}
+
+            <!-- PRODUCT DETAILS -->
+            <div class="flex-grow-1">
+                <h5 class="fw-bold mb-1">{{ item.product.name }}</h5>
+                <p class="text-muted mb-1">Price: ₹ {{ item.price|floatformat:2 }}</p>
+                <p class="text-muted mb-1">Quantity: {{ item.quantity }}</p>
+                <p class="text-muted mb-1">Status: 
+                    <span class="badge 
+                        {% if order.status == 'pending' %}bg-warning text-dark
+                        {% elif order.status == 'processing' %}bg-primary
+                        {% elif order.status == 'shipped' %}bg-info text-dark
+                        {% elif order.status == 'delivered' %}bg-success
+                        {% elif order.status == 'cancelled' %}bg-danger
+                        {% endif %}">
+                        {{ order.status|title }}
+                    </span>
+                </p>
+            </div>
+        </div>
+
+        <!-- REVIEW SECTION (ONLY IF DELIVERED) -->
+        {% if order.status == "delivered" %}
+        <div class="card-body border-top pt-3">
+            {% if item.review %}
+                <!-- SHOW SAVED REVIEW -->
+                <div class="mb-2">
+                    {% for i in "12345" %}
+                        <i class="bi bi-star-fill
+                           {% if forloop.counter <= item.review.rating %}
+                           text-warning
+                           {% else %}
+                           text-secondary
+                           {% endif %}"></i>
+                    {% endfor %}
+                </div>
+                <p class="text-muted mb-1">"{{ item.review.comment }}"</p>
+                <span class="badge bg-success">✔ You already rated this product</span>
+            {% else %}
+                <!-- REVIEW FORM -->
+                <form method="POST" action="{% url 'submit_review' item.product.id order.id %}">
+                    {% csrf_token %}
+                    <div class="star-rating mb-2">
+                        {% for i in "54321" %}
+                        <input type="radio" name="rating" value="{{ i }}" id="star{{ i }}{{ item.id }}" required>
+                        <label for="star{{ i }}{{ item.id }}">★</label>
+                        {% endfor %}
+                    </div>
+                    <textarea name="comment" class="form-control mb-2" rows="2"
+                              placeholder="Write your review..." required></textarea>
+                    <button class="btn btn-success btn-sm">Submit Review</button>
+                </form>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+    {% endfor %}
+
+    <!-- TOTAL AMOUNT -->
+    <div class="card shadow-sm border-0 rounded-4 mt-4">
+        <div class="card-body d-flex justify-content-between align-items-center">
+            <h5 class="fw-bold mb-0">Total Amount</h5>
+            <h4 class="fw-bold text-success mb-0">₹ {{ order.total_amount|floatformat:2 }}</h4>
+        </div>
+    </div>
+
+</div>
+
+<!-- STYLES -->
+<style>
+.product-card {
+    transition: 0.3s ease;
+}
+.product-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 30px rgba(0,0,0,0.12);
+}
+.product-img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 14px;
+    border: 1px solid #eee;
+}
+.star-rating {
+    display: inline-flex;
+    flex-direction: row-reverse;
+    font-size: 1.6rem;
+}
+.star-rating input {
+    display: none;
+}
+.star-rating label {
+    color: #ccc;
+    cursor: pointer;
+}
+.star-rating input:checked ~ label,
+.star-rating label:hover,
+.star-rating label:hover ~ label {
+    color: #f5c518;
+}
+</style>
+
+{% endblock %}

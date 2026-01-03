@@ -1,0 +1,153 @@
+{% extends "customer_dashboard.html" %}
+{% block content %}
+
+<div class="container py-5">
+
+    <!-- PAGE HEADER -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="fw-bold text-success">
+            <i class="bi bi-box-seam"></i> My Orders
+        </h3>
+
+        <a href="{% url 'product_list' %}" class="btn btn-outline-success">
+            <i class="bi bi-cart"></i> Shop More
+        </a>
+    </div>
+
+    {% if orders %}
+    <div class="row g-4">
+
+        {% for order in orders %}
+        <div class="col-md-6 col-lg-4">
+
+            <div class="card order-card shadow-sm h-100">
+                <div class="card-body d-flex flex-column">
+
+                    <!-- ORDER HEADER -->
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h6 class="fw-bold mb-0">Order #{{ order.id }}</h6>
+
+                        {% if order.status == "pending" %}
+                            <span class="badge bg-warning text-dark">Pending</span>
+                        {% elif order.status == "processing" %}
+                            <span class="badge bg-primary">Processing</span>
+                        {% elif order.status == "shipped" %}
+                            <span class="badge bg-info text-dark">Shipped</span>
+                        {% elif order.status == "delivered" %}
+                            <span class="badge bg-success">Delivered</span>
+                        {% elif order.status == "cancelled" %}
+                            <span class="badge bg-danger">Cancelled</span>
+                        {% endif %}
+                    </div>
+
+                    <p class="text-muted small mb-1">
+                        <i class="bi bi-calendar-event"></i>
+                        {{ order.created_at|date:"d M Y, h:i A" }}
+                    </p>
+
+                    <p class="fw-semibold mb-3">
+                        Total:
+                        <span class="text-success">
+                            ₹ {{ order.total_amount|floatformat:2 }}
+                        </span>
+                    </p>
+
+                    <!-- ORDERED PRODUCTS -->
+                    <div class="order-products mb-3">
+                        {% for item in order.items.all %}
+                        <div class="d-flex align-items-center product-item">
+                            <img src="{{ item.product.image.url }}"
+                                 alt="{{ item.product.name }}"
+                                 class="product-img">
+
+                            <div>
+                                <p class="mb-0 fw-semibold">
+                                    {{ item.product.name }}
+                                </p>
+                                <small class="text-muted">
+                                    Qty: {{ item.quantity }}
+                                </small>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <!-- ACTION BUTTONS -->
+                    <div class="mt-auto d-flex gap-2">
+                        <a href="{% url 'order_summary' order.id %}"
+                           class="btn btn-outline-success btn-sm w-100">
+                            <i class="bi bi-eye"></i> View
+                        </a>
+
+                        <a href="{% url 'track_order' order.id %}"
+                           class="btn btn-outline-primary btn-sm w-100">
+                            <i class="bi bi-truck"></i> Track
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+        {% endfor %}
+
+    </div>
+
+    {% else %}
+    <!-- EMPTY STATE -->
+    <div class="text-center py-5">
+        <i class="bi bi-box fs-1 text-muted"></i>
+        <h5 class="mt-3 text-muted">No orders yet</h5>
+        <p class="text-muted">Start shopping to see your orders here.</p>
+        <a href="{% url 'product_list' %}" class="btn btn-success">
+            Start Shopping
+        </a>
+    </div>
+    {% endif %}
+
+</div>
+
+<!-- STYLES -->
+<style>
+.order-card {
+    border-radius: 16px;
+    border: none;
+    background: linear-gradient(180deg, #ffffff, #f6fff8);
+    transition: all 0.3s ease;
+}
+
+.order-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.12);
+}
+
+.badge {
+    font-size: 0.75rem;
+    padding: 6px 10px;
+    border-radius: 10px;
+}
+
+.order-products {
+    border-top: 1px solid #e9f3ec;
+    padding-top: 10px;
+}
+
+.product-item {
+    gap: 12px;
+    padding: 8px 0;
+}
+
+.product-item:not(:last-child) {
+    border-bottom: 1px dashed #e0e0e0;
+}
+
+.product-img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 10px;
+    border: 1px solid #e0e0e0;
+}
+</style>
+
+{% endblock %}

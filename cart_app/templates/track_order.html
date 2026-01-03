@@ -1,0 +1,136 @@
+{% extends "customer_dashboard.html" %}
+{% block content %}
+
+<div class="container py-5">
+
+    <!-- BACK BUTTON -->
+    <a href="{% url 'order_history' %}" class="btn btn-outline-success mb-4">
+        <i class="bi bi-arrow-left"></i> Back to Orders
+    </a>
+
+    <!-- HEADER -->
+    <div class="mb-4">
+        <h3 class="fw-bold text-success">
+            Track Order
+            <span class="text-muted fs-6">#{{ order.id }}</span>
+        </h3>
+        <p class="text-muted mb-0">
+            Order placed on {{ order.created_at|date:"d M Y, h:i A" }}
+        </p>
+    </div>
+
+    <!-- ORDER DETAILS CARD -->
+    <div class="card shadow-sm border-0 rounded-4 mb-5">
+        <div class="card-body">
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <p class="text-muted mb-1">Current Status</p>
+                    <span class="badge bg-success px-3 py-2 fs-6">
+                        {{ order.status }}
+                    </span>
+                </div>
+                <div class="col-md-4">
+                    <p class="text-muted mb-1">Total Amount</p>
+                    <p class="fw-bold fs-5 text-success mb-0">
+                        ₹ {{ order.total_amount|floatformat:2 }}
+                    </p>
+                </div>
+                <div class="col-md-4">
+                    <p class="text-muted mb-1">Delivery Address</p>
+                    <p class="fw-semibold mb-0">
+                        {{ order.address }}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ORDER STATUS TRACKER -->
+    <h5 class="fw-bold mb-4">Order Progress</h5>
+
+    <div class="status-tracker">
+
+        <div class="step {% if order.status in 'pending processing shipped delivered' %}active{% endif %}">
+            <span class="circle"></span>
+            <p>Pending</p>
+        </div>
+
+        <div class="step {% if order.status in 'processing shipped delivered' %}active{% endif %}">
+            <span class="circle"></span>
+            <p>Processing</p>
+        </div>
+
+        <div class="step {% if order.status in 'shipped delivered' %}active{% endif %}">
+            <span class="circle"></span>
+            <p>Shipped</p>
+        </div>
+
+        <div class="step {% if order.status == 'delivered' %}active{% endif %}">
+            <span class="circle"></span>
+            <p>Delivered</p>
+        </div>
+
+    </div>
+
+    {% if order.status == 'cancelled' %}
+    <div class="alert alert-danger mt-4">
+        This order has been cancelled.
+    </div>
+    {% endif %}
+
+</div>
+
+<!-- STYLES -->
+<style>
+.status-tracker {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    margin-top: 30px;
+}
+
+.status-tracker::before {
+    content: "";
+    position: absolute;
+    top: 22px;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: #e9ecef;
+    z-index: 0;
+    border-radius: 10px;
+}
+
+.step {
+    text-align: center;
+    width: 25%;
+    position: relative;
+    z-index: 1;
+}
+
+.step .circle {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #ced4da;
+    display: inline-block;
+    margin-bottom: 8px;
+}
+
+.step.active .circle {
+    background: #28a745;
+}
+
+.step p {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #6c757d;
+}
+
+.step.active p {
+    color: #28a745;
+}
+</style>
+
+{% endblock %}

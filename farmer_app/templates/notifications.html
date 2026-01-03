@@ -1,0 +1,48 @@
+{% extends "farmer_dashboard.html" %}
+{% block content %}
+
+<div class="container-fluid">
+
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="fw-bold text-success">Notifications</h4>
+
+        <a href="{% url 'mark_notifications_read' %}"
+           class="btn btn-sm btn-outline-success">
+           Mark all as read
+        </a>
+    </div>
+
+    <!-- Notifications List -->
+    <div class="card shadow-sm border-0">
+        <ul class="list-group list-group-flush">
+
+            {% for notification in notifications %}
+                <li class="list-group-item d-flex justify-content-between align-items-start
+                    {% if not notification.is_read %}bg-light border-start border-4 border-success{% endif %}">
+
+                    <div>
+                        <a href="{% url 'farmer_questions' %}"
+                           class="text-decoration-none text-dark fw-semibold">
+                            {{ notification.message }}
+                        </a>
+
+                        <br>
+                        <small class="text-muted">
+                            {{ notification.created_at|date:"d M Y, h:i A" }}
+                        </small>
+                    </div>
+
+                </li>
+            {% empty %}
+                <li class="list-group-item text-muted text-center">
+                    No notifications yet
+                </li>
+            {% endfor %}
+
+        </ul>
+    </div>
+
+</div>
+
+{% endblock %}

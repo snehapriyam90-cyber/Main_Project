@@ -1,0 +1,92 @@
+{% extends "customer_dashboard.html" %}
+{% block content %}
+
+<div class="container-fluid mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="fw-bold text-success">Notifications</h4>
+
+        <a href="{% url 'customer_mark_notifications_read' %}"
+           class="btn btn-sm btn-outline-success">
+            Mark all as read
+        </a>
+    </div>
+
+    <div class="row">
+        {% if notifications %}
+            {% for notification in notifications %}
+            <div class="col-12 mb-2">
+
+                {% if notification.link %}
+                <a href="{{ notification.link }}" class="notification-card text-decoration-none
+                   {% if not notification.is_read %}unread{% endif %}">
+                {% else %}
+                <div class="notification-card {% if not notification.is_read %}unread{% endif %}">
+                {% endif %}
+
+                    <div class="d-flex justify-content-between align-items-start p-3">
+                        <div>
+                            <p class="mb-1">{{ notification.message }}</p>
+                            <small class="text-muted">
+                                {{ notification.created_at|date:"d M Y, h:i A" }}
+                            </small>
+                        </div>
+
+                        {% if not notification.is_read %}
+                            <span class="badge bg-success ms-2">New</span>
+                        {% endif %}
+                    </div>
+
+                {% if notification.link %}
+                </a>
+                {% else %}
+                </div>
+                {% endif %}
+
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-12 text-center text-muted">
+                <p>No notifications yet</p>
+            </div>
+        {% endif %}
+    </div>
+
+</div>
+
+<style>
+.notification-card {
+    display: block;
+    background-color: #ffffff;
+    border-left: 4px solid #2e7d32;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    transition: all 0.2s ease;
+}
+
+.notification-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.12);
+}
+
+.notification-card p {
+    font-size: 0.95rem;
+    color: #37474f;
+}
+
+.notification-card small {
+    font-size: 0.8rem;
+}
+
+.unread {
+    background-color: #f1f8f4;
+    border-left-color: #1b5e20;
+}
+
+.badge.bg-success {
+    font-size: 0.7rem;
+    padding: 4px 6px;
+}
+</style>
+
+{% endblock %}

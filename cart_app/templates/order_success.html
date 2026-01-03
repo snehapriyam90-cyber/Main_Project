@@ -1,0 +1,127 @@
+{% extends "customer_dashboard.html" %}
+{% block content %}
+
+<style>
+/* ---- Back button ---- */
+.back-btn {
+    text-decoration: none;
+    font-weight: 500;
+}
+
+/* ---- Progress Tracker ---- */
+.order-tracker {
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+    margin-top: 30px;
+}
+
+.order-tracker::before {
+    content: "";
+    position: absolute;
+    top: 14px;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: #dee2e6;
+    z-index: 0;
+}
+
+.tracker-step {
+    text-align: center;
+    position: relative;
+    z-index: 1;
+    width: 100%;
+}
+
+.tracker-step .circle {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #dee2e6;
+    margin: auto;
+    line-height: 30px;
+    color: #fff;
+    font-size: 14px;
+}
+
+.tracker-step.active .circle {
+    background: #198754;
+}
+
+.tracker-step.completed .circle {
+    background: #198754;
+}
+
+.tracker-step span {
+    display: block;
+    margin-top: 8px;
+    font-size: 14px;
+}
+</style>
+
+<div class="container my-5">
+
+    <!-- BACK BUTTON -->
+    <a href="{% url 'product_list' %}" class="back-btn text-success mb-3 d-inline-block">
+        ← Back to My Orders
+    </a>
+
+    <h3 class="text-success fw-bold mb-4">Order Confirmed 🎉</h3>
+
+    <!-- ORDER SUMMARY -->
+    <div class="card shadow-sm p-4 mb-4">
+        <h5 class="fw-semibold mb-3">Order #{{ order.id }}</h5>
+        <p>Thank you, <strong>{{ order.full_name }}</strong>! Your order has been placed successfully.</p>
+        <p class="text-muted">Estimated delivery within 7 days.</p>
+
+        <p><strong>Delivery Address:</strong> {{ order.address }}</p>
+        <p>
+            <strong>Phone:</strong> {{ order.phone }} |
+            <strong>Email:</strong> {{ order.email }}
+        </p>
+        <p><strong>Payment Method:</strong> {{ order.get_payment_method_display }}</p>
+    </div>
+
+    <!-- ORDER ITEMS -->
+    <div class="card shadow-sm p-4 mb-4">
+        <h5 class="fw-semibold mb-3">Order Items</h5>
+
+        {% for item in items %}
+        <div class="d-flex justify-content-between mb-2">
+            <span>{{ item.product.name }} × {{ item.quantity }}</span>
+            <span>₹ {{ item.price|floatformat:2 }}</span>
+        </div>
+        {% endfor %}
+
+        <hr>
+        <div class="d-flex justify-content-between fw-bold fs-5">
+            <span>Total Amount</span>
+            <span class="text-success">₹ {{ order.total_amount }}</span>
+        </div>
+    </div>
+
+    <!-- ORDER TRACKING (PROGRESS LINE) -->
+    <div class="card shadow-sm p-4">
+        <h5 class="fw-semibold mb-4">Track Order Status</h5>
+
+        <div class="order-tracker">
+
+            {% for key, value in status_choices %}
+            <div class="tracker-step
+                {% if order.status == key %}active{% endif %}
+                {% if forloop.counter0 < status_index %}completed{% endif %}
+            ">
+                <div class="circle">
+                    {% if order.status == key %}✔{% else %}{{ forloop.counter }}{% endif %}
+                </div>
+                <span>{{ value }}</span>
+            </div>
+            {% endfor %}
+
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

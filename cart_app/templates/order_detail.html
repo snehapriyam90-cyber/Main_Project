@@ -1,0 +1,143 @@
+{% extends "customer_dashboard.html" %}
+{% block content %}
+
+<div class="container my-5">
+
+    <!-- HEADER -->
+    <div class="d-flex align-items-center mb-4">
+        <a href="{% url 'customer_orders' %}" class="btn btn-outline-success me-3">
+            <i class="bi bi-arrow-left"></i>
+        </a>
+        <div>
+            <h4 class="fw-bold mb-0">Order #{{ order.id }}</h4>
+            <small class="text-muted">
+                Placed on {{ order.created_at|date:"d M Y" }}
+            </small>
+        </div>
+    </div>
+
+    <!-- ORDER STATUS -->
+    <div class="card shadow-sm mb-4 order-status-card">
+        <div class="card-body d-flex justify-content-between align-items-center">
+            <span class="fw-semibold">Order Status</span>
+            <span class="badge px-3 py-2
+                {% if order.status == 'pending' %}bg-warning
+                {% elif order.status == 'processing' %}bg-info
+                {% elif order.status == 'shipped' %}bg-primary
+                {% elif order.status == 'delivered' %}bg-success
+                {% else %}bg-danger{% endif %}
+            ">
+                {{ order.get_status_display }}
+            </span>
+        </div>
+    </div>
+
+    <!-- PRODUCTS -->
+    <div class="row g-4">
+
+        {% for item in items %}
+        <div class="col-md-6 col-lg-4">
+
+            <div class="card product-card shadow-sm h-100">
+
+                <div class="product-img">
+                    <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}">
+                </div>
+
+                <div class="card-body">
+                    <h6 class="fw-bold">{{ item.product.name }}</h6>
+
+                    <div class="small text-muted mb-2">
+                        Quantity: {{ item.quantity }}
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="fw-semibold text-success">
+                            ₹ {{ item.price|floatformat:2 }}
+                        </span>
+                        <span class="badge bg-light text-dark">
+                            Item Total: ₹ {{ item.quantity|floatformat:0|add:0|floatformat:0 }}
+                        </span>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+        {% endfor %}
+
+    </div>
+
+    <!-- ORDER SUMMARY -->
+    <div class="card shadow-sm mt-5 order-summary-card">
+        <div class="card-body">
+
+            <h5 class="fw-bold mb-3">Order Summary</h5>
+
+            <div class="d-flex justify-content-between mb-2">
+                <span>Subtotal</span>
+                <span>₹ {{ order.total_amount|floatformat:2 }}</span>
+            </div>
+
+            <div class="d-flex justify-content-between mb-2">
+                <span>Delivery Charges</span>
+                <span>₹ {{ order.delivery_charge|default:"0.00" }}</span>
+            </div>
+
+            <div class="d-flex justify-content-between mb-2">
+                <span>COD Charges</span>
+                <span>₹ {{ order.cod_charge|default:"0.00" }}</span>
+            </div>
+
+            <hr>
+
+            <div class="d-flex justify-content-between fw-bold fs-5">
+                <span>Total Paid</span>
+                <span class="text-success">
+                    ₹ {{ order.total_amount|floatformat:2 }}
+                </span>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+<!-- STYLES -->
+<style>
+.product-card {
+    border-radius: 18px;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.product-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+}
+
+.product-img {
+    height: 180px;
+    background: #f8f9fa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.product-img img {
+    max-height: 160px;
+    max-width: 100%;
+    object-fit: contain;
+}
+
+.order-status-card,
+.order-summary-card {
+    border-radius: 16px;
+}
+
+.badge {
+    font-size: 0.85rem;
+}
+</style>
+
+{% endblock %}

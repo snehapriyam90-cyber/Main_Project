@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Farmer Dashboard | Kisan Fresh</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+    <style>
+        body {
+            background-color: #f5f7fa;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        /* ================= TOP BAR ================= */
+        .topbar {
+            height: 70px;
+            background: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            position: fixed;
+            width: 100%;
+            z-index: 1000;
+        }
+
+        .brand {
+            font-size: 26px;
+            font-weight: 700;
+            color: #2e7d32;
+            letter-spacing: 1px;
+        }
+
+        .top-icons i {
+            font-size: 22px;
+            color: #2e7d32;
+            margin-left: 20px;
+            cursor: pointer;
+        }
+
+        /* ================= SIDEBAR ================= */
+        .sidebar {
+    position: sticky;      /* 🔥 KEY CHANGE */
+    top: 70px;             /* below topbar */
+    width: 250px;
+    height: calc(100vh - 70px);
+    padding-top: 20px;
+    background: linear-gradient(
+        270deg,
+        #cddc39,
+        #8bc34a,
+        #aed581
+    );
+    background-size: 400% 400%;
+    animation: gradientMove 6s ease infinite;
+    box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+}
+
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .sidebar a {
+            color: #1b5e20;
+            text-decoration: none;
+            display: block;
+            padding: 12px 25px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .sidebar a:hover {
+            background-color: rgba(255,255,255,0.3);
+            padding-left: 35px;
+        }
+
+        .sidebar i {
+            margin-right: 10px;
+        }
+
+        /* ================= CONTENT ================= */
+        .content {
+            flex: 1;
+            padding: 30px;
+        }
+
+        .card-box {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+        .brand h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 36px;
+            color: #2e7d32;
+            margin: 0;
+        }
+
+        .brand p {
+            margin: 0;
+            font-size: 14px;
+            color: #6b8f71;
+        }
+
+        .leaf {
+            color: #7cb342;
+            margin: 0 2px;
+        }
+        .layout {
+    display: flex;
+}
+
+                /* ================= FOOTER ================= */
+.footer-section {
+    background: linear-gradient(135deg, #117428, #1e8f4a);
+    color: #eaf7ee;
+    font-family: 'Poppins', sans-serif;
+    margin-top: 0 !important;
+
+}
+
+.footer-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px;
+    color: #ffffff;
+}
+
+.footer-heading {
+    font-size: 18px;
+    margin-bottom: 12px;
+    color: #d4f5dc;
+}
+
+.footer-text {
+    font-size: 14px;
+    color: #eaf7ee;
+}
+
+.footer-links {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-links li {
+    margin-bottom: 8px;
+}
+
+.footer-links a {
+    color: #eaf7ee;
+    text-decoration: none;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.footer-links a:hover {
+    color: #ffffff;
+    padding-left: 5px;
+}
+
+.footer-bottom {
+    background-color: #0e5f22;
+    font-size: 14px;
+    color: #dff5e5;
+}
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+/* MAIN WRAPPER */
+.page-wrapper {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* CONTENT MUST EXPAND */
+.main-area {
+    flex: 1;
+    padding-top: 100px;   /* topbar height */
+}
+
+/* FOOTER FIX */
+.footer-section {
+    margin-top: auto;     /* 🔥 PUSH FOOTER DOWN */
+}
+.dashboard-wrapper {
+    display: flex;
+    padding-top: 70px; /* height of topbar */
+    min-height: calc(100vh - 70px);
+}
+/* ================= RESPONSIVE DASHBOARD ================= */
+
+/* Tablets & below */
+@media (max-width: 992px) {
+
+    /* Topbar */
+    .topbar {
+        padding: 0 15px;
+    }
+
+    .brand h1 {
+        font-size: 28px;
+    }
+
+    .brand p {
+        font-size: 12px;
+    }
+
+    .top-icons i {
+        font-size: 20px;
+        margin-left: 12px;
+    }
+
+    /* Layout */
+    .dashboard-wrapper {
+        flex-direction: column;
+    }
+
+    /* Sidebar */
+    .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+        top: 0;
+        display: flex;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+
+    .sidebar a {
+        display: inline-block;
+        padding: 12px 18px;
+        font-size: 15px;
+    }
+
+    .sidebar a:hover {
+        padding-left: 18px;
+    }
+
+    /* Content */
+    .content {
+        padding: 20px;
+    }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+
+    /* Brand */
+    .brand h1 {
+        font-size: 24px;
+    }
+
+    /* Top icons */
+    .top-icons span {
+        display: none; /* hide username text */
+    }
+
+    /* Sidebar text */
+    .sidebar a {
+        font-size: 14px;
+        padding: 10px 14px;
+    }
+
+    /* Cards */
+    .card-box {
+        padding: 18px;
+    }
+
+    .card-box h4 {
+        font-size: 18px;
+    }
+
+    .card-box p {
+        font-size: 14px;
+    }
+}
+
+/* Very small devices */
+@media (max-width: 480px) {
+
+    .brand h1 {
+        font-size: 20px;
+    }
+
+    .top-icons i {
+        font-size: 18px;
+    }
+
+    .content {
+        padding: 15px;
+    }
+}
+
+
+
+
+
+    </style>
+</head>
+<body>
+
+<div class="page-wrapper">
+
+    <!-- ================= TOP BAR ================= -->
+    <div class="topbar">
+        <div class="brand">
+            <h1>K<span class="leaf"><i class="bi bi-leaf-fill"></i></span>san Fresh</h1>
+            <p>Fresh from Farmers to You</p>
+        </div>
+
+<div class="top-icons d-flex align-items-center">
+
+    <!-- 🔔 NOTIFICATION DROPDOWN -->
+    <div class="dropdown me-3">
+        <a href="#"
+           class="text-decoration-none position-relative"
+           data-bs-toggle="dropdown">
+
+            <i class="bi bi-bell position-relative">
+                {% if unread_count > 0 %}
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                    {{ unread_count }}
+                </span>
+                {% endif %}
+            </i>
+
+        </a>
+
+        <ul class="dropdown-menu dropdown-menu-end shadow"
+            style="width:320px; max-height:400px; overflow-y:auto;">
+
+            <li class="dropdown-header fw-semibold text-success">
+                Notifications
+            </li>
+
+            {% for n in request.user.notification_set.all|slice:":5" %}
+                <li>
+                    <a class="dropdown-item {% if not n.is_read %}fw-semibold{% endif %}">
+                        {{ n.message }}
+                        <br>
+                        <small class="text-muted">
+                            {{ n.created_at|date:"d M, h:i A" }}
+                        </small>
+                    </a>
+                </li>
+            {% empty %}
+                <li class="dropdown-item text-muted">
+                    No notifications
+                </li>
+            {% endfor %}
+
+            <li><hr class="dropdown-divider"></li>
+
+            <li>
+                <a href="{% url 'notifications' %}"
+                   class="dropdown-item text-center text-success fw-semibold">
+                    View all
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- 👤 PROFILE DROPDOWN -->
+    <div class="dropdown">
+        <a href="#"
+           class="dropdown-toggle text-decoration-none"
+           data-bs-toggle="dropdown">
+            <i class="bi bi-person-circle fs-5"></i>
+            <span class="text-success">{{ request.user.username }}</span>
+        </a>
+
+        <ul class="dropdown-menu dropdown-menu-end">
+            <li><a class="dropdown-item" href="{% url 'farmer_profile' %}">Profile</a></li>
+            <li><a class="dropdown-item" href="{% url 'password_change' %}">Change Password</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item text-danger" href="{% url 'customer_logout' %}">Logout</a></li>
+        </ul>
+    </div>
+
+</div>
+</div>
+<div class="dashboard-wrapper">
+    <!-- ================= SIDEBAR ================= -->
+    <div class="sidebar">
+        <a href="{% url 'farmer_dashboard' %}"><i class="bi bi-speedometer2"></i> Dashboard</a>
+
+        <a class="dropdown-toggle" data-bs-toggle="collapse" href="#productMenu">
+            <i class="bi bi-basket"></i> My Products
+        </a>
+        <div class="collapse" id="productMenu">
+            <a href="{% url 'product_add' %}" class="ms-4">➤ Add Product</a>
+            <a href="{% url 'farmer_product_list' %}" class="ms-4">➤ View Products</a>
+        </div>
+
+        <a href="#"><i class="bi bi-graph-up-arrow"></i> Sales</a>
+        <a href="{% url 'farmer_orders' %}"><i class="bi bi-box-seam"></i> Orders</a>
+        <a href="#"><i class="bi bi-star-fill"></i> Reviews</a>
+        <a href="{% url 'farmer_questions' %}">
+        <i class="bi bi-question-circle-fill"></i> Customer Questions
+        </a>
+    </div>
+
+
+        <!-- ================= CONTENT ================= -->
+        <div class="content">
+            {% block content %}
+
+            <div class="card-box">
+                <h4>Welcome {{ request.user.username }} Farmer 👨‍🌾</h4>
+                <p>This is your dashboard. Sales, orders, reviews and product details will appear here.</p>
+            </div>
+            {% endblock %}
+
+        </div>
+
+</div>
+    <!-- ================= FOOTER ================= -->
+    <footer class="footer-section">
+        <!-- footer content exactly same -->
+             <div class="container">
+        <div class="row py-5">
+
+            <!-- Brand -->
+            <div class="col-md-4 mb-4">
+                <h3 class="footer-title">Kisan Fresh</h3>
+                <p class="footer-text">
+                    Fresh fruits and vegetables directly from farmers to your home.
+                    Quality, trust and freshness guaranteed.
+                </p>
+            </div>
+
+            <!-- Quick Links -->
+            <div class="col-md-2 mb-4">
+                <h5 class="footer-heading">Quick Links</h5>
+                <ul class="footer-links">
+                    <li><a href="{% url 'global_search' %}">Search</a></li>
+                    <li><a href="{% url 'product_list' %}">Products</a></li>
+                    <li><a href="{% url 'about' %}">About</a></li>
+                </ul>
+            </div>
+
+            <!-- Policies -->
+            <div class="col-md-3 mb-4">
+                <h5 class="footer-heading">Policies</h5>
+                <ul class="footer-links">
+                    <li><a href="{% url 'privacy_policy' %}">Privacy Policy</a></li>
+                    <li><a href="{% url 'refund_policy' %}">Refund Policy</a></li>
+                    <li><a href="{% url 'terms_conditions' %}">Terms & Conditions</a></li>
+                </ul>
+            </div>
+
+            <!-- Contact / Info -->
+            <div class="col-md-3 mb-4">
+                <h5 class="footer-heading">Contact</h5>
+                <p class="footer-text mb-1">📍 Kochi, Kerala, India</p>
+                <p class="footer-text mb-1">📧 support@kisanfresh.com</p>
+                <p class="footer-text">📞 +91 6238073192</p>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Copyright -->
+    <div class="footer-bottom text-center py-3">
+        © {% now "Y" %} <strong>Kisan Fresh</strong>. All Rights Reserved.
+    </div>
+
+    </footer>
+
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

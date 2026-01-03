@@ -1,0 +1,52 @@
+{% extends "index.html" %}
+{% block content %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blogs</title>
+    <!-- Bootstrap CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="container my-5">
+    <h1 class="mb-4 text-center">Our Blogs</h1>
+
+    {% if blogs %}
+        <div class="row">
+            {% for blog in blogs %}
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card h-100 shadow-sm">
+                    {% if blog.image %}
+                        <img src="{{ blog.image.url }}" class="card-img-top" alt="{{ blog.title }}">
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ blog.title }}</h5>
+                        <p class="card-text">{{ blog.content|truncatewords:25 }}</p>
+                        <a href="{% url 'blog_detail' blog.slug %}" class="btn btn-primary btn-sm">Read More</a>
+                    </div>
+                    <div class="card-footer text-muted">
+                        Published on {{ blog.created_at|date:"F j, Y" }}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        {% if blog_count > blogs|length %}
+            <p class="text-center mt-4 text-muted">And more blogs are available in the admin panel.</p>
+        {% endif %}
+
+    {% else %}
+        <p class="text-center">No blogs available yet. Please check back later.</p>
+    {% endif %}
+</div>
+
+<!-- Bootstrap JS CDN (optional) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+{% endblock %}

@@ -1,0 +1,227 @@
+{% extends "farmer_dashboard.html" %}
+{% block content %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Product</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background-color: #f5f7f6;
+        }
+
+        .form-wrapper {
+            max-width: 1000px;
+            margin: auto;
+            padding: 40px 20px;
+        }
+
+        .form-header {
+            margin-bottom: 35px;
+        }
+
+        .form-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #1b5e20;
+        }
+
+        .form-subtitle {
+            font-size: 0.95rem;
+            color: #6c757d;
+        }
+
+        label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #37474f;
+            margin-bottom: 6px;
+        }
+
+        input, select, textarea {
+            border: none !important;
+            border-bottom: 2px solid #cfd8dc !important;
+            border-radius: 0 !important;
+            padding: 10px 4px !important;
+            background-color: transparent !important;
+            font-size: 0.95rem;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-bottom-color: #2e7d32 !important;
+            box-shadow: none !important;
+        }
+
+        textarea {
+            resize: none;
+        }
+
+        .discount-note {
+            font-size: 0.8rem;
+            color: #2e7d32;
+            margin-top: 4px;
+        }
+
+       /* Fully custom checkbox */
+.form-check-input {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+
+    width: 18px;
+    height: 18px;
+    background-color: #ffffff;
+    border: 2px solid #000000;   /* black border */
+    border-radius: 4px;
+    cursor: pointer;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Checked state */
+.form-check-input:checked {
+    background-color: #ffffff;
+    border-color: #000000;
+}
+
+/* Perfectly centered black tick */
+.form-check-input:checked::before {
+    content: "✓";
+    color: #000000;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1;
+}
+
+/* Remove focus glow */
+.form-check-input:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+        
+
+        .submit-btn {
+            background: #2e7d32;
+            color: #ffffff;
+            border: none;
+            padding: 12px 28px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 6px;
+        }
+
+        .submit-btn:hover {
+            background: #1b5e20;
+        }
+
+        .section-gap {
+            margin-top: 30px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="form-wrapper">
+    {% if messages %}
+    <div class="mb-3">
+        {% for message in messages %}
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Header -->
+    <div class="form-header">
+        <div class="form-title">Add New Product</div>
+        <div class="form-subtitle">
+            Provide accurate details for better visibility
+        </div>
+    </div>
+
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <!-- Product Name -->
+        <div class="mb-4">
+            {{ form.name.label_tag }}
+            {{ form.name }}
+        </div>
+
+        <!-- Category & Price -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                {{ form.category.label_tag }}
+                {{ form.category }}
+            </div>
+            <div class="col-md-6">
+                {{ form.price.label_tag }}
+                {{ form.price }}
+            </div>
+        </div>
+
+        <!-- Discount -->
+        <div class="mb-4">
+            {{ form.discount_percent.label_tag }}
+            {{ form.discount_percent }}
+            
+        </div>
+
+        <div class="section-gap"></div>
+
+<!-- Stock, Quantity & Weight -->
+<div class="row mb-4">
+    <div class="col-md-4">
+        {{ form.stock.label_tag }}
+        {{ form.stock }}
+    </div>
+    <div class="col-md-4">
+        {{ form.quantity.label_tag }}
+        {{ form.quantity }}
+    </div>
+    <div class="col-md-4">
+        {{ form.weight.label_tag }}
+        {{ form.weight }}
+    </div>
+</div>
+
+        <!-- Description -->
+        <div class="mb-4">
+            {{ form.description.label_tag }}
+            {{ form.description }}
+        </div>
+
+        <!-- Image -->
+        <div class="mb-4">
+            {{ form.image.label_tag }}
+            {{ form.image }}
+        </div>
+
+        <!-- Active -->
+        <div class="form-check mb-4">
+            {{ form.is_active }}
+            {{ form.is_active.label_tag }}
+        </div>
+
+        <!-- Submit -->
+        <button type="submit" class="submit-btn">
+            Save Product
+        </button>
+
+    </form>
+
+</div>
+
+</body>
+</html>
+
+{% endblock %}

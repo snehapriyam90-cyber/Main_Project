@@ -1,0 +1,202 @@
+{% extends "customer_dashboard.html" %}
+{% block content %}
+
+<div class="container my-5 position-relative">
+
+    <!-- BACK BUTTON -->
+    <a href="{% url 'view_cart' %}" class="btn btn-outline-success position-absolute top-0 start-0">
+        <i class="bi bi-arrow-left"></i> Back to Cart
+    </a>
+
+    <h3 class="fw-bold text-success mb-5 text-center">Checkout</h3>
+
+    <form method="POST">
+        {% csrf_token %}
+        <div class="row g-4">
+
+            <!-- LEFT SIDE -->
+            <div class="col-lg-8">
+
+                <!-- DELIVERY DETAILS -->
+                <div class="card shadow-sm mb-4 checkout-card hover-card">
+                    <div class="card-body">
+                        <h5 class="fw-bold mb-3 text-primary">Delivery Details</h5>
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="fw-semibold">Full Name</label>
+                                <input type="text" name="full_name" class="form-control form-control-lg" required>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="fw-semibold">Phone</label>
+                                <input type="tel" name="phone" class="form-control form-control-lg" required>
+                            </div>
+
+                            <div class="col-md-12">
+                                <label class="fw-semibold">Email</label>
+                                <input type="email" name="email" class="form-control form-control-lg" required>
+                            </div>
+
+                            <div class="col-12">
+                                <label class="fw-semibold">Delivery Address</label>
+                                <textarea name="delivery_address"
+                                          class="form-control form-control-lg"
+                                          rows="3"
+                                          required></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PAYMENT METHOD -->
+                <div class="card shadow-sm checkout-card hover-card">
+                    <div class="card-body">
+                        <h5 class="fw-bold mb-3 text-primary">Payment Method</h5>
+
+                        <div class="form-check mb-2">
+                            <input class="form-check-input"
+                                   type="radio"
+                                   name="payment_method"
+                                   value="online"
+                                   checked>
+                            <label class="form-check-label">
+                                Online Payment (UPI / Card)
+                            </label>
+                        </div>
+
+                        <div class="form-check">
+                            <input class="form-check-input"
+                                   type="radio"
+                                   name="payment_method"
+                                   value="cod"
+                                   {% if disable_cod %}disabled{% endif %}>
+                            <label class="form-check-label">
+                                Cash on Delivery
+                                {% if disable_cod %}
+                                    <span class="text-danger small">(Not available above ₹1000)</span>
+                                {% else %}
+                                    <span class="text-danger small">(₹50 COD charges)</span>
+                                {% endif %}
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT SIDE SUMMARY -->
+            <div class="col-lg-4">
+                <div class="card shadow-sm position-sticky checkout-summary hover-card" style="top:120px;">
+                    <div class="card-body">
+
+                        <h5 class="fw-bold mb-3 text-primary">Order Summary</h5>
+
+                        {% for item in items %}
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>{{ item.product.name }} × {{ item.quantity }}</span>
+                            <span>₹ {{ item.subtotal|floatformat:2 }}</span>
+                        </div>
+                        {% endfor %}
+
+                        <hr>
+
+                        <div class="d-flex justify-content-between">
+                            <span>Subtotal</span>
+                            <span>₹ {{ subtotal|floatformat:2 }}</span>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <span>Delivery</span>
+                            <span>₹ {{ delivery_charge|floatformat:2 }}</span>
+                        </div>
+
+                        <div class="d-flex justify-content-between text-muted small">
+                            <span>COD Charges</span>
+                            <span>₹ <span id="codCharge">0.00</span></span>
+                        </div>
+
+                        <hr>
+
+                        <div class="d-flex justify-content-between fw-bold fs-5">
+                            <span>Total Payable</span>
+                            <span class="text-success" id="totalPayable">
+                                ₹ {{ total_price|floatformat:2 }}
+                            </span>
+                        </div>
+
+                        <button type="submit"
+                                class="btn btn-success w-100 mt-4 fw-semibold btn-lg">
+                            Place Order
+                        </button>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </form>
+</div>
+
+<!-- STYLING -->
+<style>
+.checkout-card {
+    border-radius: 16px;
+    background: #ffffff;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.hover-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+}
+.checkout-summary {
+    border-radius: 20px;
+    background: linear-gradient(180deg, #e6fff0, #ffffff);
+}
+.form-control {
+    border-radius: 12px;
+    padding: 12px;
+}
+.btn-success {
+    border-radius: 12px;
+    font-size: 1.1rem;
+}
+</style>
+
+<!-- COD CHARGE DYNAMIC SCRIPT -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+
+    const codRadio = document.querySelector('input[name="payment_method"][value="cod"]');
+    const onlineRadio = document.querySelector('input[name="payment_method"][value="online"]');
+
+    const codChargeEl = document.getElementById('codCharge');
+    const totalPayableEl = document.getElementById('totalPayable');
+
+    const subtotal = parseFloat("{{ subtotal }}");
+    const delivery = parseFloat("{{ delivery_charge }}");
+    const COD_CHARGE = 50;
+
+    function formatAmount(amount) {
+        return amount.toFixed(2);
+    }
+
+    function updateTotal() {
+        let codCharge = 0;
+
+        if (codRadio && codRadio.checked) {
+            codCharge = COD_CHARGE;
+        }
+
+        codChargeEl.innerText = formatAmount(codCharge);
+        const total = subtotal + delivery + codCharge;
+
+        totalPayableEl.innerText = '₹ ' + formatAmount(total);
+    }
+
+    updateTotal();
+    if (codRadio) codRadio.addEventListener('change', updateTotal);
+    onlineRadio.addEventListener('change', updateTotal);
+});
+</script>
+
+{% endblock %}
