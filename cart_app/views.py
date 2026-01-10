@@ -218,12 +218,19 @@ def order_summary(request, order_id):
 
     for item in items:
         item.subtotal = item.price * item.quantity
-        item.review = item.product.reviews.filter(customer=request.user).first()
+        # Fetch review specific to this order
+        item.review = item.product.reviews.filter(
+            customer=request.user,
+            order=order
+        ).first()  # Returns None if not reviewed yet
 
     return render(request, "order_summary.html", {
         "order": order,
         "items": items
     })
+
+
+
 
 @login_required
 def order_success(request, order_id):
@@ -265,27 +272,31 @@ def track_order(request, order_id):
 @login_required
 def submit_review(request, product_id, order_id):
     order = get_object_or_404(Order, id=order_id, customer=request.user)
+    product = get_object_or_404(Product, id=product_id)
 
-    # ❌ Prevent review if not delivered
+    # Prevent review if order not delivered
     if order.status != "delivered":
         messages.error(request, "You can review only after delivery.")
         return redirect("order_summary", order_id=order.id)
 
-    product = get_object_or_404(Product, id=product_id)
-
-    # ❌ Prevent duplicate review
-    if Review.objects.filter(product=product, customer=request.user).exists():
-        messages.warning(request, "You already reviewed this product.")
+    # Prevent duplicate review for this order
+    if Review.objects.filter(product=product, customer=request.user, order=order).exists():
+        messages.warning(request, "You already reviewed this product in this order.")
         return redirect("order_summary", order_id=order.id)
 
     if request.method == "POST":
         rating = request.POST.get("rating")
         comment = request.POST.get("comment")
 
+        if not rating or not comment:
+            messages.error(request, "Please provide both rating and comment.")
+            return redirect("order_summary", order_id=order.id)
+
         Review.objects.create(
             product=product,
             customer=request.user,
-            rating=rating,
+            order=order,
+            rating=int(rating),
             comment=comment
         )
 

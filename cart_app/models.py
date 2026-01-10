@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
-from products_app.models import *
+from products_app.models import Product
+from decimal import Decimal
+
 
 
 class Cart(models.Model):
@@ -67,13 +69,21 @@ class Order(models.Model):
 
 
 class OrderItem(models.Model):
-    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='order_items')
-    product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True)
-    quantity = models.PositiveIntegerField(default=1)
-    price = models.DecimalField(max_digits=8, decimal_places=2)  # Price at the time of order
+    order = models.ForeignKey(Order, related_name='order_items', on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField()
+    price = models.DecimalField(max_digits=8, decimal_places=2)
 
-    def __str__(self):
-        return f"{self.product.name} x {self.quantity}"
-    
-    def subtotal(self):
-        return self.price * self.quantity
+    STATUS_CHOICES = (
+        ('pending', 'Pending'),
+        ('processing', 'Processing'),
+        ('shipped', 'Shipped'),
+        ('delivered', 'Delivered'),
+        ('cancelled', 'Cancelled'),
+    )
+
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default='pending'
+    )

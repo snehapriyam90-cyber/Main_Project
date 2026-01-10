@@ -168,8 +168,8 @@ def update_order_status(request, order_id):
         new_status = request.POST.get("status")
 
         if new_status in dict(Order.STATUS_CHOICES):
-            order.status = new_status
-            order.save()
+            farmer_items.update(status=new_status)
+
 
             Notification.objects.create(
                 user=order.customer,
@@ -193,9 +193,13 @@ def submit_review(request, product_id, order_id):
     order = get_object_or_404(Order, id=order_id, customer=request.user)
     product = get_object_or_404(Product, id=product_id)
 
-    # ❌ Prevent multiple reviews
-    if Review.objects.filter(product=product, customer=request.user).exists():
-        messages.warning(request, "You already rated this product.")
+    # ✅ Prevent duplicate review FOR SAME ORDER ONLY
+    if Review.objects.filter(
+        product=product,
+        customer=request.user,
+        order=order
+    ).exists():
+        messages.warning(request, "You already rated this product for this order.")
         return redirect("order_summary", order_id=order.id)
 
     if request.method == "POST":
@@ -205,6 +209,7 @@ def submit_review(request, product_id, order_id):
         Review.objects.create(
             product=product,
             customer=request.user,
+            order=order,          # ✅ VERY IMPORTANT
             rating=rating,
             comment=comment
         )
@@ -213,4 +218,14 @@ def submit_review(request, product_id, order_id):
 
     return redirect("order_summary", order_id=order.id)
 
+@login_required
+def farmer_reviews(request):
+    # Fetch reviews only for products owned by this farmer
+    reviews = Review.objects.filter(
+        product__farmer=request.user
+    ).select_related("product", "customer").order_by("-created_at")
+
+    return render(request, "farmer_reviews.html", {
+        "reviews": reviews
+    })
 

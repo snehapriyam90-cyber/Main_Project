@@ -20,32 +20,40 @@
         </p>
     </div>
 
+    <!-- MESSAGES -->
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} mt-3">{{ message }}</div>
+      {% endfor %}
+    {% endif %}
+
     <!-- ORDER INFO -->
-<div class="card shadow-sm border-0 rounded-4 mb-4">
-    <div class="card-body row text-center">
-        
-        <div class="col-md-3">
-            <p class="text-muted mb-1">Payment</p>
-            <p class="fw-semibold">{{ order.payment_method|title }}</p>
-        </div>
+    <div class="card shadow-sm border-0 rounded-4 mb-4">
+        <div class="card-body row text-center">
+            
+            <div class="col-md-3">
+                <p class="text-muted mb-1">Payment</p>
+                <p class="fw-semibold">{{ order.payment_method|title }}</p>
+            </div>
 
-        <div class="col-md-3">
-            <p class="text-muted mb-1">Delivery Address</p>
-            <p class="fw-semibold">{{ order.address }}</p>
-        </div>
+            <div class="col-md-3">
+                <p class="text-muted mb-1">Delivery Address</p>
+                <p class="fw-semibold">{{ order.address }}</p>
+            </div>
 
-        <div class="col-md-3">
-            <p class="text-muted mb-1">Email</p>
-            <p class="fw-semibold">{{ order.email }}</p>
-        </div>
+            <div class="col-md-3">
+                <p class="text-muted mb-1">Email</p>
+                <p class="fw-semibold">{{ order.email }}</p>
+            </div>
 
-        <div class="col-md-3">
-            <p class="text-muted mb-1">Phone</p>
-            <p class="fw-semibold">{{ order.phone }}</p>
-        </div>
+            <div class="col-md-3">
+                <p class="text-muted mb-1">Phone</p>
+                <p class="fw-semibold">{{ order.phone }}</p>
+            </div>
 
+        </div>
     </div>
-</div>
+
     <!-- PRODUCTS AS SEPARATE CARDS -->
     {% for item in items %}
     <div class="card shadow-sm border-0 rounded-4 mb-3 product-card">
@@ -65,20 +73,20 @@
                 <p class="text-muted mb-1">Quantity: {{ item.quantity }}</p>
                 <p class="text-muted mb-1">Status: 
                     <span class="badge 
-                        {% if order.status == 'pending' %}bg-warning text-dark
-                        {% elif order.status == 'processing' %}bg-primary
-                        {% elif order.status == 'shipped' %}bg-info text-dark
-                        {% elif order.status == 'delivered' %}bg-success
-                        {% elif order.status == 'cancelled' %}bg-danger
+                        {% if item.status == 'pending' %}bg-warning text-dark
+                        {% elif item.status == 'processing' %}bg-primary
+                        {% elif item.status == 'shipped' %}bg-info text-dark
+                        {% elif item.status == 'delivered' %}bg-success
+                        {% elif item.status == 'cancelled' %}bg-danger
                         {% endif %}">
-                        {{ order.status|title }}
+                        {{ item.status|title }}
                     </span>
                 </p>
             </div>
         </div>
 
         <!-- REVIEW SECTION (ONLY IF DELIVERED) -->
-        {% if order.status == "delivered" %}
+        {% if item.status == "delivered" %}
         <div class="card-body border-top pt-3">
             {% if item.review %}
                 <!-- SHOW SAVED REVIEW -->
@@ -86,9 +94,9 @@
                     {% for i in "12345" %}
                         <i class="bi bi-star-fill
                            {% if forloop.counter <= item.review.rating %}
-                           text-warning
+                               text-warning
                            {% else %}
-                           text-secondary
+                               text-secondary
                            {% endif %}"></i>
                     {% endfor %}
                 </div>
@@ -104,8 +112,7 @@
                         <label for="star{{ i }}{{ item.id }}">★</label>
                         {% endfor %}
                     </div>
-                    <textarea name="comment" class="form-control mb-2" rows="2"
-                              placeholder="Write your review..." required></textarea>
+                    <textarea name="comment" class="form-control mb-2" rows="2" placeholder="Write your review..." required></textarea>
                     <button class="btn btn-success btn-sm">Submit Review</button>
                 </form>
             {% endif %}

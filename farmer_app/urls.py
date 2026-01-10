@@ -28,6 +28,8 @@ urlpatterns = [
         "farmer_order/<int:order_id>/status/",
         views.update_order_status,
         name="update_order_status"
-    ),
+        ),
+        path("farmer/reviews/", views.farmer_reviews, name="farmer_reviews"),
+
 
 ]
