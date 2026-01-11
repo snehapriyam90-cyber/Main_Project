@@ -4,6 +4,8 @@ from cart_app.models import *
 from products_app.models import *
 from farmer_app.models import *
 from customer_app.models import *
+import json
+from decimal import Decimal
 
 
 def is_admin(user):
@@ -13,10 +15,96 @@ def is_admin(user):
 @login_required
 @user_passes_test(is_admin)
 def admin_dashboard(request):
-    notifications = Notification.objects.filter(user=request.user).order_by('-created_at')[:5]  # latest 5
-    return render(request, "admin_dashboard.html", {
-        "notifications": notifications
-    })
+
+    # ---------------- KPI CARDS ----------------
+    delivered_items = OrderItem.objects.filter(
+        order__status="delivered",
+        order__admin_approved=True
+    )
+    order_items = OrderItem.objects.select_related('order', 'product', 'product__farmer').filter(
+        order__status='delivered',
+        order__admin_approved=True
+    )
+
+    total_revenue = Decimal("0.00")
+    for item in delivered_items:
+        if item.product.quantity > 0:
+            total_revenue += (Decimal(item.quantity) / Decimal(item.product.quantity)) * Decimal(item.price)
+    
+    total_platform_revenue = Decimal('0.00')
+    processed_orders = set()
+    for item in order_items:
+        bundle_qty = Decimal(item.product.quantity)
+        ordered_qty = Decimal(item.quantity)
+        price = Decimal(item.price)
+        subtotal = (ordered_qty / bundle_qty * price) if bundle_qty > 0 else Decimal('0.00')
+        total_platform_revenue += subtotal
+
+        # Add delivery/COD charges only once per order
+        if item.order.id not in processed_orders:
+            total_platform_revenue += getattr(item.order, 'delivery_charge', 0)
+            if item.order.payment_method == 'cod':
+                total_platform_revenue += getattr(item.order, 'cod_charge', 0)
+            processed_orders.add(item.order.id)
+
+    total_orders = Order.objects.count()
+    total_farmers = FarmerProfile.objects.filter(verified_farmer=True).count()
+    total_customers = Profile.objects.count()
+    total_products = Product.objects.filter(is_active=True).count()
+    pending_farmers = FarmerProfile.objects.filter(verified_farmer=False).count()
+
+    # ---------------- ORDER STATUS ----------------
+    order_status = Order.objects.values("status").annotate(count=Count("id"))
+    status_labels = [s["status"] for s in order_status]
+    status_counts = [s["count"] for s in order_status]
+
+    # ---------------- TOP PRODUCTS ----------------
+    product_data = defaultdict(Decimal)
+    for item in delivered_items:
+        if item.product.quantity > 0:
+                product_data[item.product.name] += (Decimal(item.quantity) / Decimal(item.product.quantity)) * item.price
+
+    top_products = sorted(
+        [{"name": k, "revenue": v} for k, v in product_data.items()],
+        key=lambda x: x["revenue"],
+        reverse=True
+    )[:5]
+
+    # ---------------- TOP FARMERS ----------------
+    farmer_data = defaultdict(Decimal)
+    for item in delivered_items:
+        farmer_data[item.product.farmer.username] += item.price
+
+    top_farmers = sorted(
+        [{"name": k, "revenue": v} for k, v in farmer_data.items()],
+        key=lambda x: x["revenue"],
+        reverse=True
+    )[:5]
+
+    # ---------------- RECENT ACTIVITY ----------------
+    recent_orders = Order.objects.order_by("-updated_at")[:5]
+    recent_reviews = Review.objects.order_by("-id")[:5]
+
+    context = {
+        "total_revenue": round(total_revenue, 2),
+        "total_orders": total_orders,
+        "total_farmers": total_farmers,
+        "total_customers": total_customers,
+        "total_products": total_products,
+        "pending_farmers": pending_farmers,
+        'total_earnings': round(total_platform_revenue, 2),
+
+        "status_labels_json": json.dumps(status_labels),
+        "status_counts_json": json.dumps(status_counts),
+
+        "top_products": top_products,
+        "top_farmers": top_farmers,
+
+        "recent_orders": recent_orders,
+        "recent_reviews": recent_reviews,
+    }
+
+    return render(request, "admin_dashboard.html", context)
 
 @login_required
 @user_passes_test(is_admin)

@@ -95,48 +95,70 @@ def customer_logout(request):
     messages.success(request, "You have been logged out successfully.")
     return redirect("customer_login")
 
+from django.contrib.auth.decorators import login_required
+
 @login_required
 def customer_dashboard(request):
     user = request.user
 
-    # 🔹 Cart Count
+    # ================= CART =================
     cart = Cart.objects.filter(customer=user).first()
     cart_count = cart.items.count() if cart else 0
 
-    # 🔹 Orders
-    total_orders = Order.objects.filter(customer=user).count()
-    active_orders = Order.objects.filter(
-        customer=user
-    ).exclude(status="Delivered").count()
+    # ================= ORDERS =================
+    orders = Order.objects.filter(customer=user)
 
-    recent_orders = Order.objects.filter(customer=user).order_by("-created_at")[:5]
+    total_orders = orders.count()
 
-    # 🔹 Products
+    pending_orders = orders.filter(
+        status__in=["pending", "processing", "shipped"]
+    ).count()
+
+    recent_orders = orders.filter(status="delivered").order_by("-created_at")[:4]
+
+    # ================= RECENTLY ADDED PRODUCTS =================
     recent_products = Product.objects.filter(
-        is_active=True
+        is_active=True,
+        admin_approved=True
     ).order_by("-added_on")[:4]
 
-    # 🔹 Reviews
-    review_count = Review.objects.filter(customer=user).count()
+    # ================= DISCOUNTED PRODUCTS =================
+    discounted_products = Product.objects.filter(
+        is_active=True,
+        admin_approved=True,
+        discount_percent__gt=0
+    ).order_by("-discount_percent")[:4]
 
-    # 🔹 Notifications
+    # ================= WISHLIST =================
+    wishlist_count = Wishlist.objects.filter(user=user).count()
+
+    # ================= REVIEWS =================
+    reviewed_count = Review.objects.filter(customer=user).count()
+
+    # ================= NOTIFICATIONS =================
     unread_count = Notification.objects.filter(
         user=user,
         is_read=False
     ).count()
 
     context = {
+        # KPI cards
         "cart_count": cart_count,
         "total_orders": total_orders,
-        "active_orders": active_orders,
+        "pending_orders": pending_orders,
+        "wishlist_count": wishlist_count,
+        "reviewed_count": reviewed_count,
+
+        # Sections
         "recent_orders": recent_orders,
-        "recent_products": recent_products,
-        "review_count": review_count,
-        "unread_count": unread_count,  # ✅ added notifications
+        "recent_products": recent_products,        # ✅ added
+        "discounted_products": discounted_products,
+
+        # Top bar
+        "unread_count": unread_count,
     }
 
     return render(request, "customer_dashboard.html", context)
-
 
 
 from django.contrib.auth.decorators import login_required

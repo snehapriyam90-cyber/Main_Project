@@ -36,32 +36,101 @@ def get_farmer_rating(farmer):
 
 @login_required
 def farmer_dashboard(request):
-    products = Product.objects.filter(farmer=request.user)
+    farmer = request.user
 
+    # ================= PRODUCTS =================
+    products = Product.objects.filter(farmer=farmer)
+
+    # ================= ORDERS =================
     orders = Order.objects.filter(
-        order_items__product__farmer=request.user
-    ).distinct()
+        order_items__product__farmer=farmer
+    ).distinct().order_by("-created_at")
 
-    rating_data = get_farmer_rating(request.user)
-    total_sales = get_farmer_total_sales(request.user)
+    # Delivered & approved items only (for earnings)
+    order_items = OrderItem.objects.select_related(
+        "product", "order"
+    ).filter(
+        product__farmer=farmer,
+        order__status="delivered"    )
 
-    # 🔔 Unread notifications count
+    # ================= TOTALS =================
+    total_orders = order_items.values("order").distinct().count()
+    total_quantity = 0
+    total_earnings = Decimal("0.00")
+
+    # ================= PRODUCT PERFORMANCE =================
+    product_sales = defaultdict(lambda: {
+        "quantity": 0,
+        "amount": Decimal("0.00")
+    })
+
+    for item in order_items:
+        bundle_qty = Decimal(item.product.quantity or 0)
+        ordered_qty = Decimal(item.quantity)
+        bundle_price = Decimal(item.price)
+
+        if bundle_qty > 0:
+            bundles = ordered_qty / bundle_qty
+            subtotal = (bundles * bundle_price).quantize(Decimal("0.01"))
+        else:
+            subtotal = Decimal("0.00")
+
+        total_quantity += int(ordered_qty)
+        total_earnings += subtotal
+
+        product_sales[item.product.name]["quantity"] += int(ordered_qty)
+        product_sales[item.product.name]["amount"] += subtotal
+
+    product_sales = dict(product_sales)
+
+    # ================= CHART DATA (OPTIONAL) =================
+    product_labels = list(product_sales.keys())
+    product_amounts = [float(v["amount"]) for v in product_sales.values()]
+
+    # ================= RATINGS & SALES =================
+    rating_data = get_farmer_rating(farmer)
+    total_sales = get_farmer_total_sales(farmer)
+
+    # ================= NOTIFICATIONS =================
     unread_count = Notification.objects.filter(
-        user=request.user,
+        user=farmer,
         is_read=False
     ).count()
 
+    # ================= ORDER STATUS COUNTS =================
+    delivered_count = orders.filter(status="delivered").count()
+    pending_count = orders.filter(status="pending").count()
+    in_progress_count = orders.filter(status__in=["processing", "shipped"]).count()
+
+    # ================= CONTEXT =================
     context = {
+        # Used in KPI cards
         "products": products,
         "orders": orders,
-        "rating": rating_data["average"],
-        "review_count": rating_data["count"],
         "total_sales": total_sales,
-        "unread_count": unread_count,   # ✅ ADD THIS
+        "rating": rating_data.get("average", 0),
+        "review_count": rating_data.get("count", 0),
+
+        # Extra stats
+        "total_orders": total_orders,
+        "total_quantity": total_quantity,
+        "total_earnings": total_earnings,
+
+        # Product performance
+        "product_sales": product_sales,
+        "product_labels": product_labels,
+        "product_amounts": product_amounts,
+
+        # Notifications
+        "unread_count": unread_count,
+
+        "delivered_count": delivered_count,
+        "pending_count": pending_count,
+        "in_progress_count": in_progress_count,
+
     }
 
     return render(request, "farmer_dashboard.html", context)
-
 @login_required
 def farmer_profile(request):
     try:
@@ -243,8 +312,7 @@ def farmer_sales(request):
 
     order_items = OrderItem.objects.select_related("product", "order").filter(
         product__farmer=request.user,
-        order__status="delivered",
-        order__admin_approved=True
+        order__status="delivered"
 
     )
 

@@ -302,6 +302,19 @@ html, body {
         padding: 15px;
     }
 }
+@keyframes fadeSlide {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+.welcome-animate {
+    animation: fadeSlide 1s ease-in-out;
+}
 
 
 
@@ -417,10 +430,280 @@ html, body {
         <div class="content">
             {% block content %}
 
-            <div class="card-box">
-                <h4>Welcome {{ request.user.username }} Farmer 👨‍🌾</h4>
-                <p>This is your dashboard. Sales, orders, reviews and product details will appear here.</p>
+            <div class="container-fluid py-4">
+
+    <!-- ================= WELCOME CARD ================= -->
+    <div class="card border-0 rounded-4 shadow-lg mb-4 text-center welcome-animate"
+         style="background: linear-gradient(135deg, #cddc39, #8bc34a); color:#1b5e20;">
+        <div class="card-body py-5">
+            <h2 class="fw-bold mb-2">
+                Welcome back, {{ request.user.first_name|default:request.user.username }} 
+            </h2>
+            <p class="mb-0 fs-6">
+                Manage your farm, track your orders, and grow sustainably.Stay on top of your farm operations and maximize your earnings!
+            </p>
+        </div>
+    </div>
+
+    <!-- ================= KPI CARDS ================= -->
+    <div class="row g-4 mb-4">
+
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+                <div class="card-body">
+                    <p class="text-muted mb-1">Total Earnings</p>
+                    <h3 class="fw-bold text-success">
+                        ₹ {{ total_earnings|floatformat:2 }}
+                    </h3>
+                    <small class="text-muted">Delivered orders</small>
+                </div>
             </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+                <div class="card-body">
+                    <p class="text-muted mb-1">Total Orders</p>
+                    <h3 class="fw-bold">
+                        {{ orders.count }}
+                    </h3>
+                    <small class="text-muted">All time</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+                <div class="card-body">
+                    <p class="text-muted mb-1">Products Listed</p>
+                    <h3 class="fw-bold">
+                        {{ products.count }}
+                    </h3>
+                    <small class="text-muted">Active products</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+                <div class="card-body">
+                    <p class="text-muted mb-1">Average Rating</p>
+                    <h3 class="fw-bold text-warning">
+                        {{ rating }} ★
+                    </h3>
+                    <small class="text-muted">
+                        From {{ review_count }} reviews
+                    </small>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ================= ORDERS OVERVIEW ================= -->
+    <div class="row g-4 mb-4">
+
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 rounded-4 text-center h-100">
+                <div class="card-body">
+                    <h6 class="text-muted">Pending Orders</h6>
+                    <h2 class="fw-bold text-danger">
+                        {{ pending_count }}
+                    </h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 rounded-4 text-center h-100">
+                <div class="card-body">
+                    <h6 class="text-muted">In Progress</h6>
+                    <h2 class="fw-bold text-warning">{{ in_progress_count }}</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 rounded-4 text-center h-100">
+                <div class="card-body">
+                    <h6 class="text-muted">Delivered</h6>
+                    <h2 class="fw-bold text-success">{{ delivered_count }}</h2>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+<!-- ================= RECENT ACTIVITY ================= -->
+<div class="card shadow-lg border-0 rounded-4 mb-4" style="background: #ffffff;">
+    <div class="card-body">
+        <h5 class="fw-bold mb-4 text-success">Recent Activity</h5>
+
+        {% if orders %}
+        <ul class="list-unstyled timeline mb-0">
+            {% for order in orders|slice:":5" %}
+            <li class="timeline-item mb-3 d-flex align-items-start">
+                <!-- Icon -->
+                <div class="timeline-icon me-3">
+                    <i class="bi bi-bag-check-fill text-success fs-4"></i>
+                </div>
+                <!-- Content -->
+                <div class="timeline-content">
+                    <p class="mb-1 fw-semibold">
+                        Order #{{ order.id }} status updated to 
+                        <span class="text-dark">{{ order.status|capfirst }}</span>
+                    </p>
+                    <small class="text-muted">{{ order.created_at|date:"d M, h:i A" }}</small>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+            <p class="text-muted mb-0">No recent activity available.</p>
+        {% endif %}
+    </div>
+</div>
+
+<!-- ================= CUSTOM STYLES ================= -->
+<style>
+/* Timeline styles */
+.timeline-item {
+    position: relative;
+    padding-left: 50px;
+}
+.timeline-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 22px;
+    width: 4px;
+    height: 100%;
+    background: #d0f0c0; /* soft green vertical line */
+    border-radius: 2px;
+}
+.timeline-icon {
+    position: absolute;
+    left: 12px;
+    top: 0;
+    width: 24px;
+    height: 24px;
+    background: #2e7d32;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.timeline-item:hover .timeline-icon {
+    background: #66bb6a;
+    transform: scale(1.1);
+    transition: 0.3s;
+}
+.timeline-content p {
+    margin-bottom: 0;
+}
+.timeline-content small {
+    font-size: 0.8rem;
+}
+</style>
+
+    <!-- ================= PRODUCT PERFORMANCE ================= -->
+    <div class="card shadow-sm border-0 rounded-4 mb-4">
+        <div class="card-body">
+            <h5 class="fw-bold mb-3">Product Performance</h5>
+
+            {% if products %}
+                <table class="table align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Product</th>
+                            <th>Stock</th>
+                            <th>Price</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for product in products|slice:":5" %}
+                        <tr>
+                            <td>{{ product.name }}</td>
+                            <td>{{ product.stock }}</td>
+                            <td>₹ {{ product.price }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p class="text-muted mb-0">No products added yet.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- ================= QUESTIONS & REVIEWS ================= -->
+    <div class="row g-4 mb-4">
+
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0 rounded-4 h-100">
+                <div class="card-body">
+                    <h5 class="fw-bold mb-3">Customer Questions</h5>
+                    <p class="text-muted">
+                        Respond to customer questions to improve trust and sales.
+                    </p>
+                    <a href="{% url 'farmer_questions' %}" class="btn btn-outline-success">
+                        View Questions
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0 rounded-4 h-100">
+                <div class="card-body">
+                    <h5 class="fw-bold mb-3">Customer Reviews</h5>
+                    <p class="text-muted">
+                        See what customers are saying about your products.
+                    </p>
+                    <a href="{% url 'farmer_reviews' %}" class="btn btn-outline-warning">
+                        View Reviews
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+<!-- ================= SUPPORT ================= -->
+<div class="card shadow-lg border-0 rounded-4 text-center mb-4" style="background: linear-gradient(135deg, #ffffff, #dce0dc);">
+    <div class="card-body py-5">
+        <h5 class="fw-bold mb-3" style="color: #2e7d32;">Need Help?</h5>
+        <p class="text-muted mb-4" style="max-width: 500px; margin: 0 auto;">
+            Facing issues with orders, payments, or products? Our support team is here to assist you quickly and efficiently.
+        </p>
+
+        <div class="d-flex flex-column align-items-center">
+            <h6 class="fw-bold mb-3 text-success">Contact Support</h6>
+
+            <p class="mb-2">
+                📧 <a href="mailto:support@kisanfresh.com" class="text-success text-decoration-none fw-semibold">support@kisanfresh.com</a>
+            </p>
+
+            <p class="mb-0">
+                📞 <a href="tel:+916238073192" class="text-success text-decoration-none fw-semibold">+91 6238073192</a>
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- ================= CUSTOM STYLES ================= -->
+<style>
+.card-body h5, .card-body h6 {
+    letter-spacing: 0.5px;
+}
+.card-body a:hover {
+    text-decoration: underline;
+}
+</style>
+
+</div>
+
             {% endblock %}
 
         </div>
