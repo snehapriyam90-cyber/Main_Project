@@ -1,0 +1,169 @@
+{% extends "admin_dashboard.html" %}
+
+{% block content %}
+<div class="container-fluid py-4">
+
+    <h3 class="fw-bold text-info mb-4">System Activity & Logs</h3>
+
+    <div class="row g-4">
+
+        <!-- ================= NEW REGISTRATIONS ================= -->
+        <div class="col-lg-6 col-md-12">
+            <div class="card shadow-sm border-0 rounded-4 h-100">
+                <div class="card-header bg-success text-white rounded-3 d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="bi bi-person-plus-fill me-2"></i>New Registrations
+                    </h5>
+                    <button class="btn btn-sm btn-light"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#registrationActivity">
+                        <i class="bi bi-chevron-down"></i>
+                    </button>
+                </div>
+
+                <div id="registrationActivity" class="collapse">
+                    <div class="card-body p-0" style="max-height:300px; overflow-y:auto;">
+                        <ul class="list-group list-group-flush">
+                            {% for activity in activities %}
+                                {% if activity.type == 'registration' %}
+                                <li class="list-group-item py-2">
+                                    <span class="fw-semibold">{{ activity.description }}</span><br>
+                                    <small class="text-muted">
+                                        {{ activity.time|date:"d M Y H:i" }}
+                                    </small>
+                                </li>
+                                {% endif %}
+                            {% empty %}
+                                <li class="list-group-item text-center text-muted py-3">
+                                    No registrations yet.
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= ORDER STATUS ================= -->
+        <div class="col-lg-6 col-md-12">
+            <div class="card shadow-sm border-0 rounded-4 h-100">
+                <div class="card-header bg-primary text-white rounded-3 d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="bi bi-bag-check-fill me-2"></i>Order Status Changes
+                    </h5>
+                    <button class="btn btn-sm btn-light"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#orderActivity">
+                        <i class="bi bi-chevron-down"></i>
+                    </button>
+                </div>
+
+                <div id="orderActivity" class="collapse">
+                    <div class="card-body p-0" style="max-height:300px; overflow-y:auto;">
+                        <ul class="list-group list-group-flush">
+                            {% for activity in activities %}
+                                {% if activity.type == 'order' %}
+                                <li class="list-group-item py-2">
+                                    <span class="fw-semibold">{{ activity.description }}</span><br>
+                                    <small class="text-muted">
+                                        {{ activity.time|date:"d M Y H:i" }}
+                                    </small>
+                                </li>
+                                {% endif %}
+                            {% empty %}
+                                <li class="list-group-item text-center text-muted py-3">
+                                    No order activity yet.
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= PRODUCT CHANGES ================= -->
+        <div class="col-lg-6 col-md-12">
+            <div class="card shadow-sm border-0 rounded-4 h-100">
+                <div class="card-header bg-warning text-dark rounded-3 d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="bi bi-box-seam-fill me-2"></i>Product Changes
+                    </h5>
+                    <button class="btn btn-sm btn-light"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#productActivity">
+                        <i class="bi bi-chevron-down"></i>
+                    </button>
+                </div>
+
+                <div id="productActivity" class="collapse">
+                    <div class="card-body p-0" style="max-height:300px; overflow-y:auto;">
+                        <ul class="list-group list-group-flush">
+                            {% for activity in activities %}
+                                {% if activity.type == 'product' %}
+                                <li class="list-group-item py-2">
+                                    <span class="fw-semibold">{{ activity.description }}</span><br>
+                                    <small class="text-muted">
+                                        {{ activity.time|date:"d M Y H:i" }}
+                                    </small>
+                                </li>
+                                {% endif %}
+                            {% empty %}
+                                <li class="list-group-item text-center text-muted py-3">
+                                    No product activity yet.
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= REVIEWS ================= -->
+        <div class="col-lg-6 col-md-12">
+            <div class="card shadow-sm border-0 rounded-4 h-100">
+                <div class="card-header bg-info text-white rounded-3 d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="bi bi-chat-text-fill me-2"></i>Reviews
+                    </h5>
+                    <button class="btn btn-sm btn-light"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#reviewActivity">
+                        <i class="bi bi-chevron-down"></i>
+                    </button>
+                </div>
+
+                <div id="reviewActivity" class="collapse">
+                    <div class="card-body p-0" style="max-height:300px; overflow-y:auto;">
+                        <ul class="list-group list-group-flush">
+                            {% for activity in activities %}
+                                {% if activity.type == 'review' %}
+                                <li class="list-group-item py-2">
+                                    <span class="fw-semibold">{{ activity.description }}</span><br>
+                                    <small class="text-muted">
+                                        {{ activity.time|date:"d M Y H:i" }}
+                                    </small>
+                                </li>
+                                {% endif %}
+                            {% empty %}
+                                <li class="list-group-item text-center text-muted py-3">
+                                    No review activity yet.
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<style>
+.card-header button {
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+}
+</style>
+{% endblock %}

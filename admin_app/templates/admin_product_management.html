@@ -1,0 +1,171 @@
+{% extends "admin_dashboard.html" %}
+{% block content %}
+
+<style>
+.product-card {
+    background: #fff;
+    border-radius: 22px;
+    padding: 20px;
+    transition: 0.3s ease;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    position: relative;
+}
+.product-card::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 5px;
+    height: 100%;
+    background: linear-gradient(to bottom, #dc3545, #fd7e14);
+}
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 18px 45px rgba(0,0,0,0.15);
+}
+.product-img {
+    width: 100%;
+    height: 140px;
+    object-fit: cover;
+    border-radius: 16px;
+    border: 1px solid #eee;
+}
+.badge-pill {
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 0.8rem;
+}
+.product-details {
+    background: #f9fafb;
+    border-radius: 16px;
+    padding: 15px;
+    margin-top: 15px;
+}
+</style>
+
+<div class="container py-4">
+
+    <!-- HEADER -->
+    <div class="mb-5 p-4 rounded-4 shadow text-white"
+         style="background: linear-gradient(135deg, #dc3545, #fd7e14);">
+        <h4 class="fw-bold mb-1">
+            <i class="bi bi-box-seam-fill"></i> Product Management
+        </h4>
+        <p class="mb-0 opacity-75">
+            Approve, block or remove products added by farmers
+        </p>
+    </div>
+
+    {% if products %}
+    <div class="row g-4">
+
+        {% for product in products %}
+        <div class="col-xl-6">
+
+            <div class="product-card h-100">
+
+                <div class="row g-4 align-items-center">
+
+                    <!-- IMAGE -->
+                    <div class="col-md-4">
+                        <img src="{{ product.image.url }}" class="product-img">
+                    </div>
+
+                    <!-- BASIC INFO -->
+                    <div class="col-md-8">
+                        <h5 class="fw-bold mb-1">{{ product.name }}</h5>
+
+                        <p class="text-muted mb-1">
+                            <i class="bi bi-person"></i> {{ product.farmer.username }}
+                        </p>
+
+                        <p class="fw-semibold mb-1">₹{{ product.price }}</p>
+
+                        <p class="text-muted small mb-2">
+                            Stock: {{ product.stock }}
+                        </p>
+
+                        {% if product.admin_approved %}
+                            <span class="badge bg-success badge-pill">Approved</span>
+                        {% else %}
+                            <span class="badge bg-warning text-dark badge-pill">Pending</span>
+                        {% endif %}
+
+                        {% if product.is_active %}
+                            <span class="badge bg-primary badge-pill ms-2">Active</span>
+                        {% else %}
+                            <span class="badge bg-secondary badge-pill ms-2">Blocked</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- ACTIONS -->
+                <div class="d-flex justify-content-end gap-2 mt-4 flex-wrap">
+
+                    <!-- VIEW DETAILS -->
+                    <button class="btn btn-outline-primary btn-sm"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#details{{ product.id }}">
+                        <i class="bi bi-eye"></i> View Details
+                    </button>
+
+                    {% if not product.admin_approved %}
+                        <a href="{% url 'admin_approve_product' product.id %}"
+                           class="btn btn-outline-success btn-sm">
+                            <i class="bi bi-check-circle"></i> Approve
+                        </a>
+
+                        <a href="{% url 'admin_reject_product' product.id %}"
+                           class="btn btn-outline-danger btn-sm">
+                            <i class="bi bi-x-circle"></i> Reject
+                        </a>
+                    {% endif %}
+
+                    <a href="{% url 'admin_toggle_product_status' product.id %}"
+                       class="btn btn-outline-warning btn-sm">
+                        {% if product.is_active %}Block{% else %}Unblock{% endif %}
+                    </a>
+
+                    <a href="{% url 'admin_delete_product' product.id %}"
+                       class="btn btn-outline-dark btn-sm"
+                       onclick="return confirm('Delete this product?');">
+                        <i class="bi bi-trash"></i>
+                    </a>
+                </div>
+
+                <!-- COLLAPSIBLE DETAILS -->
+                <div class="collapse" id="details{{ product.id }}">
+                    <div class="product-details">
+                        <p><strong>Category:</strong> {{ product.category|title }}</p>
+                        <p><strong>Description:</strong> {{ product.description }}</p>
+                        <p>
+                            <strong>Quantity:</strong> {{ product.quantity }} |
+                            <strong>Weight:</strong> {{ product.weight }}
+                        </p>
+
+                        {% if product.discount_percent %}
+                            <p>
+                                <strong>Discount:</strong>
+                                {{ product.discount_percent }}%
+                            </p>
+                        {% endif %}
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+        {% endfor %}
+
+    </div>
+
+    {% else %}
+    <div class="text-center py-5">
+        <i class="bi bi-box fs-1 text-muted"></i>
+        <h6 class="mt-2 text-muted">No products found</h6>
+    </div>
+    {% endif %}
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,110 @@
+{% extends "admin_dashboard.html" %}
+{% block content %}
+
+<style>
+.review-card {
+    background: #ffffff;
+    border-radius: 18px;
+    padding: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    transition: 0.3s ease;
+    position: relative;
+}
+.review-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 18px 45px rgba(0,0,0,0.15);
+}
+.stars {
+    color: #ffc107;
+}
+.meta-text {
+    font-size: 0.85rem;
+}
+</style>
+
+<div class="container py-4">
+
+    <!-- HEADER -->
+    <div class="mb-5 p-4 rounded-4 shadow text-white"
+         style="background: linear-gradient(135deg, #6f42c1, #d63384);">
+        <h4 class="fw-bold mb-1">
+            <i class="bi bi-star-fill"></i> Review & Rating Moderation
+        </h4>
+        <p class="mb-0 opacity-75">
+            Monitor and remove fake or abusive customer reviews
+        </p>
+    </div>
+
+    {% if reviews %}
+    <div class="row g-4">
+
+        {% for review in reviews %}
+        <div class="col-lg-6">
+
+            <div class="review-card h-100">
+
+                <!-- PRODUCT -->
+                <h6 class="fw-bold mb-1">
+                    {{ review.product.name }}
+                </h6>
+
+                <!-- FARMER -->
+                <p class="text-muted meta-text mb-1">
+                    <i class="bi bi-person-badge"></i>
+                    Farmer: {{ review.product.farmer.username }}
+                </p>
+
+                <!-- CUSTOMER -->
+                <p class="text-muted meta-text mb-1">
+                    <i class="bi bi-person"></i>
+                    Customer: {{ review.customer.username }}
+                </p>
+
+                <!-- ORDER -->
+                <p class="text-muted meta-text mb-2">
+                    <i class="bi bi-receipt"></i>
+                    Order ID: {{ review.order.id }}
+                </p>
+
+                <!-- RATING -->
+                <div class="stars mb-2">
+                    {% for i in "12345" %}
+                        {% if forloop.counter <= review.rating %}
+                            <i class="bi bi-star-fill"></i>
+                        {% else %}
+                            <i class="bi bi-star"></i>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+
+                <!-- REVIEW TEXT -->
+                <p class="text-muted">
+                    "{{ review.comment }}"
+                </p>
+
+                <!-- ACTION -->
+                <div class="text-end">
+                    <a href="{% url 'admin_delete_review' review.id %}"
+                       class="btn btn-outline-danger btn-sm"
+                       onclick="return confirm('Delete this review?');">
+                        <i class="bi bi-trash"></i> Delete Review
+                    </a>
+                </div>
+
+            </div>
+
+        </div>
+        {% endfor %}
+
+    </div>
+
+    {% else %}
+    <div class="text-center py-5">
+        <i class="bi bi-chat-left-dots fs-1 text-muted"></i>
+        <p class="text-muted mt-2">No reviews found</p>
+    </div>
+    {% endif %}
+
+</div>
+
+{% endblock %}

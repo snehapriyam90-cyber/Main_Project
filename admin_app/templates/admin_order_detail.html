@@ -1,0 +1,134 @@
+{% extends "admin_dashboard.html" %}
+{% block content %}
+
+<div class="container py-4">
+    <!-- PAGE HEADER WITH BACK BUTTON -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="mb-0 text-danger fw-bold">Order Details</h3>
+        <a href="{% url 'admin_orders' %}" class="btn btn-outline-danger">
+            <i class="bi bi-arrow-left"></i> Back to Orders
+        </a>
+    </div>
+
+    <!-- ================= ORDER INFO CARD ================= -->
+    <div class="card shadow-sm border-0 rounded-4 mb-4">
+        <div class="card-header bg-danger text-white rounded-top-4">
+            <h4 class="mb-0">Order #{{ order.id }}</h4>
+        </div>
+        <div class="card-body">
+            <p><i class="bi bi-person-fill text-danger me-2"></i>
+               <strong>Customer:</strong> {{ order.customer.username }}</p>
+            <p><i class="bi bi-info-circle-fill text-danger me-2"></i>
+               <strong>Current Status:</strong>
+               <span class="badge 
+                    {% if order.status == 'pending' %}bg-warning text-dark
+                    {% elif order.status == 'processing' %}bg-primary
+                    {% elif order.status == 'shipped' %}bg-info text-dark
+                    {% elif order.status == 'delivered' %}bg-success
+                    {% elif order.status == 'cancelled' %}bg-danger
+                    {% endif %}">
+                    {{ order.status|title }}
+               </span>
+            </p>
+            <p><i class="bi bi-cash-stack text-danger me-2"></i>
+               <strong>Payment:</strong> {{ order.payment_method|title }}</p>
+            <p><i class="bi bi-geo-alt-fill text-danger me-2"></i>
+               <strong>Delivery Address:</strong> {{ order.address }}</p>
+            <p><i class="bi bi-phone-fill text-danger me-2"></i>
+               <strong>Phone:</strong> {{ order.phone }}</p>
+            <p><i class="bi bi-envelope-fill text-danger me-2"></i>
+               <strong>Email:</strong> {{ order.email }}</p>
+            <p><i class="bi bi-calendar-event-fill text-danger me-2"></i>
+               <strong>Placed On:</strong> {{ order.created_at|date:"d M Y, h:i A" }}</p>
+        </div>
+    </div>
+
+    <!-- ================= ORDER ITEMS CARD ================= -->
+    <div class="card shadow-sm border-0 rounded-4 mb-4">
+        <div class="card-header bg-danger text-white rounded-top-4">
+            <h5 class="mb-0">Ordered Items</h5>
+        </div>
+        <div class="card-body">
+            {% for item in items %}
+            <div class="d-flex justify-content-between align-items-center mb-3 p-3 border rounded-3 bg-light">
+                <div>
+                    <h6 class="fw-bold mb-1">{{ item.product.name }}</h6>
+                    <p class="mb-0 text-muted">Farmer: {{ item.product.farmer.username }}</p>
+                    <p class="mb-0 text-muted">Qty: {{ item.quantity }}</p>
+                    <p class="mb-0">
+                        <strong>Farmer Status:</strong>
+                        <span class="badge 
+                            {% if item.status == 'pending' %}bg-warning text-dark
+                            {% elif item.status == 'processing' %}bg-primary
+                            {% elif item.status == 'shipped' %}bg-info text-dark
+                            {% elif item.status == 'delivered' %}bg-success
+                            {% elif item.status == 'cancelled' %}bg-danger
+                            {% endif %}">
+                            {{ item.status|title }}
+                        </span>
+                    </p>
+                </div>
+                <div class="text-end">
+                    <p class="mb-1 fw-semibold">₹ {{ item.price|floatformat:2 }}</p>
+                    <p class="mb-0 text-muted">Subtotal: ₹ {{ item.subtotal|default:item.price|floatformat:2 }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- ================= FINAL STATUS UPDATE CARD ================= -->
+    <div class="card shadow-sm border-0 rounded-4 mb-4">
+        <div class="card-header bg-danger text-white rounded-top-4">
+            <h5 class="mb-0">Finalize Order Status</h5>
+        </div>
+        <div class="card-body">
+            <form method="POST" action="{% url 'admin_update_order_status' order.id %}">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <select name="status" class="form-select">
+                        {% for key, label in status_choices %}
+                        <option value="{{ key }}" {% if order.status == key %}selected{% endif %}>
+                            {{ label }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <button class="btn btn-success w-100">Update Final Status</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ================= TOTAL AMOUNT CARD ================= -->
+    <div class="card shadow-sm border-0 rounded-4 mb-4">
+        <div class="card-body d-flex justify-content-between align-items-center">
+            <h5 class="fw-bold mb-0">Total Amount</h5>
+            <h4 class="fw-bold text-success mb-0">₹ {{ order.total_amount|floatformat:2 }}</h4>
+        </div>
+    </div>
+</div>
+
+<style>
+.card-header h4, .card-header h5 {
+    font-size: 1.1rem;
+}
+.card-body p {
+    font-size: 0.95rem;
+}
+.card-body h6 {
+    font-size: 1rem;
+}
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 35px rgba(0,0,0,0.15);
+    transition: all 0.3s ease;
+}
+.badge {
+    font-size: 0.9rem;
+}
+.bg-light {
+    background-color: #f9f9f9 !important;
+}
+</style>
+
+{% endblock %}

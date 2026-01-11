@@ -1,0 +1,107 @@
+{% extends "admin_dashboard.html" %}
+{% block content %}
+
+<div class="container py-4">
+
+    <!-- PAGE HEADER -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="text-danger fw-bold">
+            <i class="bi bi-people-fill"></i> Customer Management
+        </h3>
+    </div>
+
+    {% if customers %}
+    <div class="customer-list">
+
+        {% for customer in customers %}
+        <div class="customer-item p-4 mb-3 bg-white rounded-4 shadow-sm">
+
+            <!-- CUSTOMER HEADER -->
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <h5 class="fw-bold mb-0">{{ customer.user.username }}</h5>
+
+                {% if customer.is_active %}
+                    <span class="badge bg-success">Active</span>
+                {% else %}
+                    <span class="badge bg-danger">Blocked</span>
+                {% endif %}
+            </div>
+
+            <!-- CUSTOMER DETAILS -->
+            <div class="row text-muted small">
+                <div class="col-md-6 mb-2">
+                    <i class="bi bi-envelope-fill me-2 text-danger"></i>
+                    {{ customer.user.email }}
+                </div>
+
+                <div class="col-md-6 mb-2">
+                    <i class="bi bi-telephone-fill me-2 text-danger"></i>
+                    {{ customer.profile.phone|default:"Not provided" }}
+                </div>
+
+                <div class="col-md-6 mb-2">
+                    <i class="bi bi-person-fill me-2 text-danger"></i>
+                    Age: {{ customer.profile.age|default:"N/A" }}
+                </div>
+
+                <div class="col-md-6 mb-2">
+                    <i class="bi bi-box-seam me-2 text-danger"></i>
+                    Total Orders: {{ customer.total_orders }}
+                </div>
+
+                <div class="col-12">
+                    <i class="bi bi-geo-alt-fill me-2 text-danger"></i>
+                    {{ customer.address.address_line|default:"Address not added" }}
+                </div>
+            </div>
+
+            <!-- ACTION BUTTONS -->
+            <div class="d-flex gap-2 mt-3">
+                <a href="{% url 'admin_customer_orders' customer.user.id %}"
+                   class="btn btn-outline-primary btn-sm">
+                    <i class="bi bi-eye"></i> Orders
+                </a>
+
+                {% if customer.is_active %}
+                <a href="{% url 'admin_block_customer' customer.user.id %}"
+                   class="btn btn-outline-danger btn-sm">
+                    <i class="bi bi-x-circle"></i> Block
+                </a>
+                {% else %}
+                <a href="{% url 'admin_unblock_customer' customer.user.id %}"
+                   class="btn btn-outline-success btn-sm">
+                    <i class="bi bi-check-circle"></i> Unblock
+                </a>
+                {% endif %}
+            </div>
+
+        </div>
+        {% endfor %}
+
+    </div>
+    {% else %}
+    <div class="text-center py-5">
+        <i class="bi bi-people fs-1 text-muted"></i>
+        <h5 class="mt-3 text-muted">No customers found</h5>
+    </div>
+    {% endif %}
+
+</div>
+
+<style>
+.customer-item {
+    border-left: 5px solid #dc3545;
+    transition: all 0.3s ease;
+}
+.customer-item:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 18px 35px rgba(0,0,0,0.15);
+}
+.badge {
+    font-size: 0.8rem;
+    padding: 6px 14px;
+    border-radius: 12px;
+}
+</style>
+
+{% endblock %}

@@ -91,7 +91,19 @@ class FarmerProfile(models.Model):
     license_number = models.CharField(max_length=100, blank=True, null=True)
     verified_farmer = models.BooleanField(default=False)
 
-    
+    STATUS_CHOICES = (
+    ('pending', 'Pending'),
+    ('approved', 'Approved'),
+    ('rejected', 'Rejected'),
+    ('blocked', 'Blocked'),
+    )
+
+    status = models.CharField(
+    max_length=20,
+    choices=STATUS_CHOICES,
+    default='pending'
+    )
+
 
     # 📅 Metadata
     created_at = models.DateTimeField(auto_now_add=True)

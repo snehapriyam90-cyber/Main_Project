@@ -1,0 +1,20 @@
+{% extends "admin_dashboard.html" %}
+{% block content %}
+<h3>Notifications</h3>
+
+{% if notifications %}
+    <ul class="list-group">
+    {% for note in notifications %}
+        <li class="list-group-item">
+            {{ note.message }} 
+            {% if note.link %}
+                - <a href="{{ note.link }}">View</a>
+            {% endif %}
+            <small class="text-muted float-end">{{ note.created_at|date:"d M Y, H:i" }}</small>
+        </li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No notifications yet.</p>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,90 @@
+{% extends "admin_dashboard.html" %}
+{% block content %}
+
+<div class="container py-4">
+
+    <h3 class="fw-bold text-success mb-4">
+        <i class="bi bi-person-badge-fill"></i> Farmer Management
+    </h3>
+
+    {% for farmer in farmers %}
+    <div class="bg-white p-4 mb-4 rounded-4 shadow-sm farmer-card">
+
+        <!-- HEADER -->
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+                <h5 class="fw-bold mb-1">{{ farmer.full_name }}</h5>
+                <p class="mb-0 text-muted">
+                    <i class="bi bi-house-fill me-1"></i> {{ farmer.farm_name }}
+                </p>
+            </div>
+
+            {% if farmer.status == 'pending' %}
+                <span class="badge bg-warning text-dark">Pending</span>
+            {% elif farmer.status == 'approved' %}
+                <span class="badge bg-success">Approved</span>
+            {% elif farmer.status == 'rejected' %}
+                <span class="badge bg-danger">Rejected</span>
+            {% elif farmer.status == 'blocked' %}
+                <span class="badge bg-dark">Blocked</span>
+            {% endif %}
+        </div>
+
+        <!-- DETAILS -->
+        <div class="row text-muted small mb-3">
+            <div class="col-md-4"><i class="bi bi-envelope"></i> {{ farmer.email }}</div>
+            <div class="col-md-4"><i class="bi bi-telephone"></i> {{ farmer.phone }}</div>
+            <div class="col-md-4"><i class="bi bi-geo-alt"></i> {{ farmer.district }}, {{ farmer.state }}</div>
+        </div>
+
+        <div class="row text-muted small mb-3">
+            <div class="col-md-4">Farm Type: {{ farmer.farm_type }}</div>
+            <div class="col-md-4">Experience: {{ farmer.years_of_experience }} yrs</div>
+            <div class="col-md-4">Delivery Radius: {{ farmer.delivery_radius_km }} km</div>
+        </div>
+
+        <!-- ACTIONS -->
+        <div class="d-flex gap-2">
+
+            {% if farmer.status == 'pending' %}
+            <a href="{% url 'admin_approve_farmer' farmer.id %}" class="btn btn-success btn-sm">Approve</a>
+            <a href="{% url 'admin_reject_farmer' farmer.id %}" class="btn btn-danger btn-sm">Reject</a>
+            {% endif %}
+
+            {% if farmer.status == 'approved' %}
+            <a href="{% url 'admin_block_farmer' farmer.id %}" class="btn btn-outline-danger btn-sm">Block</a>
+            {% endif %}
+
+            <a href="{% url 'admin_farmer_products' farmer.user.id %}" class="btn btn-outline-primary btn-sm">
+                Products
+            </a>
+
+            <a href="{% url 'admin_farmer_sales' farmer.user.id %}" class="btn btn-outline-secondary btn-sm">
+                Sales
+            </a>
+
+        </div>
+
+    </div>
+    {% empty %}
+    <p class="text-muted">No farmers found.</p>
+    {% endfor %}
+
+</div>
+
+<style>
+.farmer-card {
+    border-left: 5px solid #198754;
+    transition: 0.3s;
+}
+.farmer-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 18px 35px rgba(0,0,0,0.15);
+}
+.badge {
+    padding: 6px 14px;
+    border-radius: 12px;
+}
+</style>
+
+{% endblock %}

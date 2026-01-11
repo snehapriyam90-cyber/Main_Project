@@ -1,0 +1,171 @@
+{% extends "admin_dashboard.html" %}
+{% block content %}
+
+<style>
+    /* Header */
+    .page-header {
+        background: linear-gradient(135deg, #198754, #20c997);
+        color: #fff;
+        border-radius: 22px;
+        padding: 24px 30px;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+    }
+
+    /* Product Card */
+    .product-card {
+        border-radius: 22px;
+        background: #ffffff;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 10px 28px rgba(0,0,0,0.1);
+    }
+
+    .product-card::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 6px;
+        height: 100%;
+        background: linear-gradient(to bottom, #198754, #20c997);
+    }
+
+    .product-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 20px 45px rgba(0,0,0,0.18);
+    }
+
+    /* Image */
+    .product-img {
+        height: 150px;
+        width: 100%;
+        object-fit: cover;
+        border-radius: 16px;
+        border: 1px solid #eaeaea;
+        background: #f8f9fa;
+    }
+
+    /* Price */
+    .price-text {
+        font-size: 1.15rem;
+        font-weight: 600;
+    }
+
+    /* Description */
+    .desc-text {
+        font-size: 0.9rem;
+        line-height: 1.5;
+        color: #6c757d;
+    }
+
+    /* Status badge */
+    .status-badge {
+        border-radius: 20px;
+        padding: 5px 14px;
+        font-size: 0.8rem;
+    }
+</style>
+
+<div class="container py-4">
+
+    <!-- HEADER -->
+    <div class="page-header mb-5 d-flex justify-content-between align-items-center">
+        <div>
+            <h4 class="fw-bold mb-1">
+                Products by {{ farmer.username }}
+            </h4>
+            <p class="mb-0 opacity-75">
+                Complete product details added by this farmer
+            </p>
+        </div>
+
+        <a href="{% url 'admin_farmer_management' %}"
+           class="btn btn-light btn-sm rounded-pill px-4">
+            ← Back
+        </a>
+    </div>
+
+    {% if products %}
+        <div class="row g-4">
+
+            {% for product in products %}
+            <div class="col-xl-6">
+
+                <div class="product-card p-4 h-100">
+
+                    <div class="row g-4 align-items-center">
+
+                        <!-- IMAGE -->
+                        <div class="col-md-4">
+                            <img src="{{ product.image.url }}"
+                                 alt="{{ product.name }}"
+                                 class="product-img">
+                        </div>
+
+                        <!-- INFO -->
+                        <div class="col-md-8">
+                            <h5 class="fw-bold mb-1">{{ product.name }}</h5>
+
+                            <p class="text-muted mb-1">
+                                {{ product.category|default:"Uncategorized"|title }}
+                            </p>
+
+                            <p class="mb-2 price-text">
+                                ₹{{ product.price }}
+
+                                {% if product.discount_percent %}
+                                    <span class="badge bg-success ms-2">
+                                        {{ product.discount_percent }}% OFF
+                                    </span>
+                                {% endif %}
+                            </p>
+
+                            <p class="mb-2 text-muted small">
+                                <i class="bi bi-box-seam"></i>
+                                Stock: {{ product.stock|default:0 }}
+                                &nbsp;|&nbsp;
+                                Qty: {{ product.quantity }}
+                                &nbsp;|&nbsp;
+                                {{ product.weight }}
+                            </p>
+
+                            {% if product.is_active %}
+                                <span class="badge bg-success status-badge">
+                                    Active
+                                </span>
+                            {% else %}
+                                <span class="badge bg-secondary status-badge">
+                                    Inactive
+                                </span>
+                            {% endif %}
+                        </div>
+
+                    </div>
+
+                    <!-- DESCRIPTION -->
+                    <div class="mt-3 ps-1">
+                        <p class="desc-text mb-0">
+                            {{ product.description|truncatewords:28 }}
+                        </p>
+                    </div>
+
+                </div>
+
+            </div>
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+        <div class="text-center py-5">
+            <i class="bi bi-box-seam text-muted fs-1"></i>
+            <h6 class="mt-2 text-muted">
+                No products added by this farmer
+            </h6>
+        </div>
+    {% endif %}
+
+</div>
+
+{% endblock %}

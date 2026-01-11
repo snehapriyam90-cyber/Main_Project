@@ -18,11 +18,15 @@ from django.contrib import admin
 from django.urls import path,include
 from django.conf import settings
 from django.conf.urls.static import static
+from customer_app.views import customer_logout   # 🔴 use YOUR real app name
+
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('',include('admin_app.urls')),
+    path("logout/", customer_logout, name="customer_logout"),
+
+    path('admin-dashboard/',include('admin_app.urls')),
     path('',include('farmer_app.urls')),
     path('',include('customer_app.urls')),
     path('',include('products_app.urls')),
@@ -30,7 +34,8 @@ urlpatterns = [
     path('',include('payment_app.urls')),
     path('',include('home_app.urls')),
     path('customer_app/password', include('django.contrib.auth.urls')),
-
+    
+    
 
 ]
 if settings.DEBUG:

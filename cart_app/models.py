@@ -37,6 +37,7 @@ class CartItem(models.Model):
 # ------------------- ORDERS -------------------
 
 class Order(models.Model):
+
     STATUS_CHOICES = (
         ('pending', 'Pending'),
         ('processing', 'Processing'),
@@ -60,12 +61,30 @@ class Order(models.Model):
     address = models.TextField()
     payment_method = models.CharField(max_length=20, choices=PAYMENT_CHOICES)
     total_amount = models.DecimalField(max_digits=10, decimal_places=2)
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+
+    # 🔴 ADMIN FINAL STATUS (Customer sees this)
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default='pending'
+    )
+
+    # 🟡 FARMER REQUESTED STATUS (Admin sees this)
+    farmer_status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default='pending'
+    )
+
+    # 🔐 Admin approval control
+    admin_approved = models.BooleanField(default=False)
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f"Order #{self.id} - {self.customer.username}"
+
 
 
 class OrderItem(models.Model):

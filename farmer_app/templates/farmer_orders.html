@@ -22,15 +22,15 @@
                 </p>
 
                 <!-- STATUS BADGE -->
-                {% if order.status == "pending" %}
+                {% if order.farmer_status == "pending" %}
                     <span class="badge bg-warning text-dark px-3 py-2">Pending</span>
-                {% elif order.status == "processing" %}
+                {% elif order.farmer_status == "processing" %}
                     <span class="badge bg-info px-3 py-2">Processing</span>
-                {% elif order.status == "shipped" %}
+                {% elif order.farmer_status == "shipped" %}
                     <span class="badge bg-primary px-3 py-2">Shipped</span>
-                {% elif order.status == "delivered" %}
+                {% elif order.farmer_status == "delivered" %}
                     <span class="badge bg-success px-3 py-2">Delivered</span>
-                {% elif order.status == "cancelled" %}
+                {% elif order.farmer_status == "cancelled" %}
                     <span class="badge bg-danger px-3 py-2">Cancelled</span>
                 {% endif %}
             </div>

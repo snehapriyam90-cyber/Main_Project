@@ -19,6 +19,8 @@ class Product(models.Model):
     description = models.TextField(blank=True, null=True)
     image = models.ImageField(upload_to='products/', blank=True, null=True)
     farmer = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    admin_approved = models.BooleanField(default=False)
+
     is_active = models.BooleanField(default=True)
     added_on = models.DateTimeField(auto_now_add=True)
     discount_percent = models.PositiveIntegerField(blank=True, null=True)

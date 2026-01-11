@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard | Kisan Fresh</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+    <style>
+        body {
+            background-color: #f5f7fa;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        /* ================= TOP BAR ================= */
+        .topbar {
+            height: 70px;
+            background: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            position: fixed;
+            width: 100%;
+            z-index: 1000;
+        }
+
+        .brand h1 {
+            font-size: 36px;
+            color: #b71c1c;
+            margin: 0;
+        }
+
+        .brand p {
+            margin: 0;
+            font-size: 14px;
+            color: #8a6d6d;
+        }
+
+        .top-icons i {
+            font-size: 22px;
+            color: #b71c1c;
+            margin-left: 20px;
+            cursor: pointer;
+        }
+
+        /* ================= SIDEBAR ================= */
+        .sidebar {
+            position: sticky;
+            top: 70px;
+            width: 250px;
+            height: calc(100vh - 70px);
+            padding-top: 20px;
+            background: linear-gradient(
+                270deg,
+                #ff8a80,
+                #e53935,
+                #b71c1c
+            );
+            background-size: 400% 400%;
+            animation: gradientMove 6s ease infinite;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+        }
+
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .sidebar a {
+            color: #ffffff;
+            text-decoration: none;
+            display: block;
+            padding: 12px 25px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .sidebar a:hover {
+            background-color: rgba(255,255,255,0.2);
+            padding-left: 35px;
+        }
+
+        .sidebar i {
+            margin-right: 10px;
+        }
+
+        /* ================= CONTENT ================= */
+        .content {
+            flex: 1;
+            padding: 30px;
+        }
+
+        .card-box {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+
+        .dashboard-wrapper {
+            display: flex;
+            padding-top: 70px;
+            min-height: calc(100vh - 70px);
+        }
+
+        /* ================= FOOTER ================= */
+       .footer-section {
+    background: linear-gradient(135deg, #8b1e1e, #c62828);
+    color: #fdeaea;
+    font-family: 'Poppins', sans-serif;
+    margin-top: 0 !important;
+}
+
+.footer-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px;
+    color: #ffffff;
+}
+
+.footer-heading {
+    font-size: 18px;
+    margin-bottom: 12px;
+    color: #ffd6d6;
+}
+
+.footer-text {
+    font-size: 14px;
+    color: #fdeaea;
+}
+
+.footer-links {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-links li {
+    margin-bottom: 8px;
+}
+
+.footer-links a {
+    color: #fdeaea;
+    text-decoration: none;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.footer-links a:hover {
+    color: #ffffff;
+    padding-left: 5px;
+}
+
+.footer-bottom {
+    background-color: #6a1515;
+    font-size: 14px;
+    color: #ffeaea;
+}
+
+    </style>
+</head>
+
+<body>
+
+<div class="page-wrapper">
+
+<!-- ================= TOP BAR ================= -->
+<div class="topbar">
+    <div class="brand">
+        <h1>K<span class="leaf"><i class="bi bi-leaf-fill"></i></span>san Fresh</h1>
+
+        <p>Admin Control Panel</p>
+    </div>
+
+    <div class="top-icons d-flex align-items-center">
+
+        <!-- 🔔 NOTIFICATION DROPDOWN -->
+        <div class="dropdown me-3">
+            <a href="#" class="text-decoration-none position-relative" data-bs-toggle="dropdown">
+                <i class="bi bi-bell position-relative">
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                        3
+                    </span>
+                </i>
+            </a>
+
+<ul class="dropdown-menu dropdown-menu-end shadow"
+    style="width:320px; max-height:400px; overflow-y:auto;">
+    <li class="dropdown-header fw-semibold text-danger">
+        Notifications
+    </li>
+
+    {% if notifications %}
+        {% for note in notifications %}
+            <li>
+                <a href="{{ note.link|default:'#' }}" class="dropdown-item">
+                    {{ note.message }}
+                    <br>
+                    <small class="text-muted">{{ note.created_at|date:"d M, h:i A" }}</small>
+                </a>
+            </li>
+        {% endfor %}
+    {% else %}
+        <li>
+            <span class="dropdown-item text-muted">No notifications</span>
+        </li>
+    {% endif %}
+
+    <li><hr class="dropdown-divider"></li>
+
+    <li>
+        <a href="{% url 'admin_notifications' %}" class="dropdown-item text-center text-danger fw-semibold">
+            View all
+        </a>
+    </li>
+</ul>
+</div>
+
+        <!-- ⚙️ SETTINGS DROPDOWN -->
+        <div class="dropdown">
+            <a href="#" class="dropdown-toggle text-decoration-none" data-bs-toggle="dropdown">
+                <i class="bi bi-gear-fill"></i>
+                <span class="text-danger fw-semibold">Settings</span>
+            </a>
+
+            <ul class="dropdown-menu dropdown-menu-end shadow">
+                <li><a class="dropdown-item" href="#">Change Admin Password</a></li>
+                <li><a class="dropdown-item" href="#">Update Platform Charges (Delivery, COD)</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item text-danger" href="/logout/">Logout</a></li>
+            </ul>
+        </div>
+
+    </div>
+</div>
+
+<!-- ================= DASHBOARD ================= -->
+<div class="dashboard-wrapper">
+
+    <!-- ================= SIDEBAR ================= -->
+    <div class="sidebar">
+        <a href="{% url 'admin_dashboard' %}"><i class="bi bi-speedometer2"></i> Dashboard</a>
+        <a href="{% url 'admin_farmer_management' %}"><i class="bi bi-people-fill"></i> Farmer Management</a>
+        <a href="{% url 'admin_customers' %}"><i class="bi bi-person-lines-fill"></i> Customer Management</a>
+        <a href="{% url 'admin_product_management' %}"><i class="bi bi-basket-fill"></i> Products</a>
+        <a href="{% url 'admin_orders' %}"><i class="bi bi-box-seam"></i> Orders</a>
+        <a href="{% url 'admin_review_management' %}"><i class="bi bi-star-fill"></i> Reviews</a>
+        <a href="{% url 'admin_sales_report' %}"><i class="bi bi-bar-chart-fill"></i> Sales & Reports</a>
+        <a href="{% url 'admin_system_activity' %}"><i class="bi bi-activity"></i> System Activity</a>
+    </div>
+
+    <!-- ================= CONTENT ================= -->
+    <div class="content">
+        {% block content %}
+        <div class="card-box">
+            <h4>Welcome Admin 👩‍💼</h4>
+            <p>
+                This is the admin dashboard. Manage farmers, customers,
+                products, orders, reviews and system activities here.
+            </p>
+        </div>
+        {% endblock %}
+    </div>
+
+</div>
+
+<!-- ================= FOOTER ================= -->
+    <!-- ================= FOOTER ================= -->
+    <footer class="footer-section">
+        <!-- footer content exactly same -->
+             <div class="container">
+        <div class="row py-5">
+
+            <!-- Brand -->
+            <div class="col-md-4 mb-4">
+                <h3 class="footer-title">Kisan Fresh</h3>
+                <p class="footer-text">
+                    Fresh fruits and vegetables directly from farmers to your home.
+                    Quality, trust and freshness guaranteed.
+                </p>
+            </div>
+
+            <!-- Quick Links -->
+            <div class="col-md-2 mb-4">
+                <h5 class="footer-heading">Quick Links</h5>
+                <ul class="footer-links">
+                    <li><a href="{% url 'global_search' %}">Search</a></li>
+                    <li><a href="{% url 'product_list' %}">Products</a></li>
+                    <li><a href="{% url 'about' %}">About</a></li>
+                </ul>
+            </div>
+
+            <!-- Policies -->
+            <div class="col-md-3 mb-4">
+                <h5 class="footer-heading">Policies</h5>
+                <ul class="footer-links">
+                    <li><a href="{% url 'privacy_policy' %}">Privacy Policy</a></li>
+                    <li><a href="{% url 'refund_policy' %}">Refund Policy</a></li>
+                    <li><a href="{% url 'terms_conditions' %}">Terms & Conditions</a></li>
+                </ul>
+            </div>
+
+            <!-- Contact / Info -->
+            <div class="col-md-3 mb-4">
+                <h5 class="footer-heading">Contact</h5>
+                <p class="footer-text mb-1">📍 Kochi, Kerala, India</p>
+                <p class="footer-text mb-1">📧 support@kisanfresh.com</p>
+                <p class="footer-text">📞 +91 6238073192</p>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Copyright -->
+    <div class="footer-bottom text-center py-3">
+        © {% now "Y" %} <strong>Kisan Fresh</strong>. All Rights Reserved.
+    </div>
+
+    </footer>
+
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

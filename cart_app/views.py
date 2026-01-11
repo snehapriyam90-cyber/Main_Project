@@ -246,19 +246,30 @@ def order_success(request, order_id):
 # ---------------- ORDER HISTORY ----------------
 @login_required
 def order_history(request):
+    # Fetch all orders for this customer
     orders = Order.objects.filter(customer=request.user).order_by("-created_at")
+    
+    # Prefetch items for each order
+    for order in orders:
+        order.items = order.order_items.select_related('product').all()
+    
     return render(request, "order_history.html", {"orders": orders})
 
 @login_required
 def order_detail(request, order_id):
     order = get_object_or_404(Order, id=order_id, customer=request.user)
-    items = order.order_items.all()
-
+    items = order.order_items.select_related('product').all()
+    
+    # Add farmer-specific status
+    for item in items:
+        item.farmer_status = item.status  # assuming you store farmer's requested status per item
+    
     return render(request, "order_detail.html", {
         "order": order,
         "items": items,
         "status_choices": Order.STATUS_CHOICES
     })
+
 
 
 # ---------------- TRACK ORDER STATUS ----------------
@@ -271,7 +282,7 @@ def track_order(request, order_id):
 
 @login_required
 def submit_review(request, product_id, order_id):
-    order = get_object_or_404(Order, id=order_id, customer=request.user)
+    order = get_object_or_404(Order, id=order_id, customer=request.user,admin_approved=True)
     product = get_object_or_404(Product, id=product_id)
 
     # Prevent review if order not delivered

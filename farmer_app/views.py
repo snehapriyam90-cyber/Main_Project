@@ -8,6 +8,8 @@ from .forms import *
 from django.db.models import Sum, F,Avg, Count
 from products_app.models import *
 from django.urls import reverse
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth import update_session_auth_hash
 
 
 def get_farmer_total_sales(farmer):
@@ -133,18 +135,16 @@ def farmer_orders(request):
 def update_order_status(request, order_id):
     order = get_object_or_404(Order, id=order_id)
 
-    # ✅ Only this farmer’s products
     farmer_items = order.order_items.select_related("product").filter(
         product__farmer=request.user
     )
 
     farmer_subtotal = Decimal("0.00")
 
-    # ✅ APPLY BUNDLE LOGIC
     for item in farmer_items:
-        bundle_qty = Decimal(item.product.quantity)     # e.g. 5
-        ordered_qty = Decimal(item.quantity)             # e.g. 10
-        bundle_price = Decimal(item.price)               # e.g. 102
+        bundle_qty = Decimal(item.product.quantity)
+        ordered_qty = Decimal(item.quantity)
+        bundle_price = Decimal(item.price)
 
         if bundle_qty > 0:
             bundles = ordered_qty / bundle_qty
@@ -154,7 +154,6 @@ def update_order_status(request, order_id):
 
         farmer_subtotal += item.subtotal
 
-    # ✅ DELIVERY + COD CHARGES (ONLY IF APPLICABLE)
     delivery_charge = Decimal(getattr(order, "delivery_charge", 0))
     cod_charge = Decimal("0.00")
 
@@ -163,18 +162,25 @@ def update_order_status(request, order_id):
 
     farmer_total = farmer_subtotal + delivery_charge + cod_charge
 
-    # ✅ UPDATE STATUS
+    # ✅ FARMER STATUS REQUEST
     if request.method == "POST":
         new_status = request.POST.get("status")
 
         if new_status in dict(Order.STATUS_CHOICES):
             farmer_items.update(status=new_status)
 
+            # 🔥 CHANGE HERE
+            order.farmer_status = new_status
+            order.admin_approved = False
+            order.save()
 
-            Notification.objects.create(
-                user=order.customer,
-                message=f"Your order #{order.id} is now {new_status.capitalize()}."
-            )
+            # 🔔 Notify admin only
+            admin_users = User.objects.filter(is_staff=True)
+            for admin in admin_users:
+                Notification.objects.create(
+                    user=admin,
+                    message=f"Farmer requested status '{new_status}' for Order #{order.id}"
+                )
 
         return redirect("farmer_orders")
 
@@ -229,3 +235,70 @@ def farmer_reviews(request):
         "reviews": reviews
     })
 
+from collections import defaultdict
+from decimal import Decimal
+
+@login_required
+def farmer_sales(request):
+
+    order_items = OrderItem.objects.select_related("product", "order").filter(
+        product__farmer=request.user,
+        order__status="delivered",
+        order__admin_approved=True
+
+    )
+
+    total_orders = order_items.values("order").distinct().count()
+    total_quantity = 0
+    total_earnings = Decimal("0.00")
+
+    product_sales = defaultdict(lambda: {"quantity": 0, "amount": Decimal("0.00")})
+
+    for item in order_items:
+        bundle_qty = Decimal(item.product.quantity)
+        ordered_qty = Decimal(item.quantity)
+        bundle_price = Decimal(item.price)
+
+        if bundle_qty > 0:
+            bundles = ordered_qty / bundle_qty
+            subtotal = (bundles * bundle_price).quantize(Decimal("0.01"))
+        else:
+            subtotal = Decimal("0.00")
+
+        total_quantity += int(ordered_qty)
+        total_earnings += subtotal
+
+        product_sales[item.product.name]["quantity"] += int(ordered_qty)
+        product_sales[item.product.name]["amount"] += subtotal
+
+    # Convert defaultdict to regular dict for template
+    product_sales = dict(product_sales)
+
+    # Chart data
+    product_labels = list(product_sales.keys())
+    product_amounts = [float(v["amount"]) for v in product_sales.values()]
+
+    return render(request, "farmer_sales.html", {
+        "total_orders": total_orders,
+        "total_quantity": total_quantity,
+        "total_earnings": total_earnings,
+        "product_sales": product_sales,
+        "product_labels": product_labels,
+        "product_amounts": product_amounts,
+    })
+
+@login_required
+def password_change(request):
+    if request.method == "POST":
+        form = PasswordChangeForm(user=request.user, data=request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)
+            messages.success(request, "Password changed successfully!")
+            return redirect("customer_dashboard")
+        else:
+            messages.error(request, "Please correct the errors below.")
+    else:
+        form = PasswordChangeForm(user=request.user)
+
+    return render(request, "password_change.html", {"form": form})

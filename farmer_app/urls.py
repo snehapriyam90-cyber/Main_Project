@@ -30,6 +30,9 @@ urlpatterns = [
         name="update_order_status"
         ),
         path("farmer/reviews/", views.farmer_reviews, name="farmer_reviews"),
+        path("farmer/sales/", views.farmer_sales, name="farmer_sales"),
+        path('password-change/', views.password_change, name='farmer_change_password'),
+
 
 
 ]

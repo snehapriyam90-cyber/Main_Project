@@ -52,25 +52,7 @@
                         </span>
                     </p>
 
-                    <!-- ORDERED PRODUCTS -->
-                    <div class="order-products mb-3">
-                        {% for item in order.items.all %}
-                        <div class="d-flex align-items-center product-item">
-                            <img src="{{ item.product.image.url }}"
-                                 alt="{{ item.product.name }}"
-                                 class="product-img">
-
-                            <div>
-                                <p class="mb-0 fw-semibold">
-                                    {{ item.product.name }}
-                                </p>
-                                <small class="text-muted">
-                                    Qty: {{ item.quantity }}
-                                </small>
-                            </div>
-                        </div>
-                        {% endfor %}
-                    </div>
+                    
 
                     <!-- ACTION BUTTONS -->
                     <div class="mt-auto d-flex gap-2">

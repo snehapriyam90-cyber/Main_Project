@@ -1,0 +1,85 @@
+{% extends "admin_dashboard.html" %}
+{% block content %}
+
+<div class="container py-4">
+    <h3 class="mb-4 text-danger fw-bold">All Orders</h3>
+
+    <div class="row g-4">
+        {% for order in orders %}
+        <div class="col-md-6 col-lg-4">
+            <div class="card shadow-sm border-0 rounded-4 h-100">
+                <div class="card-header bg-danger text-white rounded-top-4">
+                    <strong>Order #{{ order.id }}</strong>
+                </div>
+                <div class="card-body">
+                    <!-- Customer Info -->
+                    <p class="mb-2">
+                        <i class="bi bi-person-fill text-danger me-2"></i>
+                        <strong>Customer:</strong> {{ order.customer.username }}
+                    </p>
+
+                    <!-- Status -->
+                    <p class="mb-2">
+                        <i class="bi bi-info-circle-fill text-danger me-2"></i>
+                        <strong>Status:</strong>
+                        <span class="badge 
+                            {% if order.status == 'pending' %}bg-warning text-dark
+                            {% elif order.status == 'processing' %}bg-primary
+                            {% elif order.status == 'shipped' %}bg-info text-dark
+                            {% elif order.status == 'delivered' %}bg-success
+                            {% elif order.status == 'cancelled' %}bg-danger
+                            {% endif %}">
+                            {{ order.status|title }}
+                        </span>
+                    </p>
+
+                    <!-- Farmer Request -->
+                    <p class="mb-3">
+                        <i class="bi bi-arrow-repeat text-danger me-2"></i>
+                        <strong>Farmer Request:</strong>
+                        {% if order.admin_approved %}
+                            <span class="text-success fw-semibold">Done</span>
+                        {% else %}
+                            <span class="text-warning fw-semibold">{{ order.farmer_status|title }}</span>
+                        {% endif %}
+                    </p>
+
+                    <!-- Actions -->
+                    <a href="{% url 'admin_order_detail' order.id %}" class="btn btn-outline-danger btn-sm w-100">
+                        View Details
+                    </a>
+                </div>
+                <div class="card-footer text-muted text-end">
+                    {{ order.created_at|date:"d M Y, h:i A" }}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+.card-header {
+    font-size: 1.1rem;
+}
+
+.card-body p {
+    font-size: 0.95rem;
+}
+
+.card-footer {
+    font-size: 0.85rem;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 35px rgba(0,0,0,0.15);
+    transition: all 0.3s ease;
+}
+
+.badge {
+    font-size: 0.9rem;
+}
+</style>
+
+{% endblock %}

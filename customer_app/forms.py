@@ -40,7 +40,7 @@ class LoginForm(forms.Form):
     password = forms.CharField(widget=forms.PasswordInput)
     role = forms.ChoiceField(
         choices=ROLE_CHOICES,
-        required=True,  # Must select
+        required=False,  # Must select
         widget=forms.RadioSelect
     )
 

@@ -30,39 +30,55 @@ def customer_register(request):
 
 
 # views.py
+from django.contrib.auth import authenticate, login
+from django.contrib import messages
+from django.shortcuts import render, redirect
+
 def customer_login(request):
     if request.method == "POST":
         form = LoginForm(request.POST)
-        print("POST data:", request.POST)
 
         if form.is_valid():
             username_or_email = form.cleaned_data["username_or_email"]
             password = form.cleaned_data["password"]
             selected_role = form.cleaned_data.get("role")
-            print("Selected role:", selected_role)   # debug
 
-            user = None
-            try:
-                user = User.objects.get(username=username_or_email)
-            except User.DoesNotExist:
+            # ✅ Authenticate properly
+            user = authenticate(
+                request,
+                username=username_or_email,
+                password=password
+            )
+
+            if user is None:
+                # try email login
                 try:
-                    user = User.objects.get(email=username_or_email)
+                    user_obj = User.objects.get(email=username_or_email)
+                    user = authenticate(
+                        request,
+                        username=user_obj.username,
+                        password=password
+                    )
                 except User.DoesNotExist:
                     user = None
 
-            if user and user.check_password(password):
+            if user:
                 login(request, user)
 
-                if user.is_superuser:
+                # ✅ SUPERUSER → no role required
+                if user.is_superuser or user.is_staff:
                     return redirect("admin_dashboard")
-                elif selected_role == "farmer":
+
+                # ✅ NORMAL USERS → role required
+                if selected_role == "farmer":
                     return redirect("farmer_dashboard")
                 elif selected_role == "customer":
                     return redirect("customer_dashboard")
+                else:
+                    messages.error(request, "Please select a role")
             else:
                 messages.error(request, "Invalid username/email or password")
-        else:
-            messages.error(request, "Please select a role")
+
     else:
         form = LoginForm()
 
@@ -177,7 +193,7 @@ def change_password(request):
             user = form.save()
             update_session_auth_hash(request, user)
             messages.success(request, "Password changed successfully!")
-            return redirect("customer_profile")
+            return redirect("customer_dashboard")
         else:
             messages.error(request, "Please correct the errors below.")
     else:
