@@ -295,7 +295,7 @@ def password_change(request):
             user = form.save()
             update_session_auth_hash(request, user)
             messages.success(request, "Password changed successfully!")
-            return redirect("customer_dashboard")
+            return redirect("farmer_dashboard")
         else:
             messages.error(request, "Please correct the errors below.")
     else:

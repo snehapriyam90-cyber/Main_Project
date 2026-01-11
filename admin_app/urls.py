@@ -54,6 +54,11 @@ urlpatterns = [
     path("reviews/delete/<int:review_id>/", views.admin_delete_review, name="admin_delete_review"),
     path("sales-report/", views.admin_sales_report, name="admin_sales_report"),
     path('system-activity/', views.admin_system_activity, name='admin_system_activity'),
+    path(
+        "admin/change-password/",
+        views.admin_password_change,
+        name="admin_password_change"
+    ),
 
 
 
