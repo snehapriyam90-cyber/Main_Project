@@ -31,6 +31,8 @@ urlpatterns = [
     path('terms_conditions/', views.terms_conditions, name='terms_conditions'),
     path('search/', views.global_search, name='global_search'),
     path('home_product_list', views.home_product_list, name='home_product_list'),
+    path('home/', views.home, name='home'),
+
 
 
 ]

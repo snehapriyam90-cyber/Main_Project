@@ -146,3 +146,8 @@ def home_product_list(request):
 
     return render(request, 'home_product_list.html', context)
 
+def home(request):
+    products = Product.objects.filter(is_active=True).order_by('-added_on')[:4]
+    return render(request, 'index.html', {'products': products})
+
+

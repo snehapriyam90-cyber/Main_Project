@@ -20,15 +20,19 @@
     <style>
         body {
             margin: 0;
-            background-color: #f8f9fa;
+            background-color: #ffffff;
         }
 
         /* ================= TOP BORDER ================= */
 
         .top-green-line {
-            height: 38px;
-            background-color: #117428;
-        }
+    height: 42px;
+    background: linear-gradient(90deg, #0f6f2f, #1fa34a, #0f6f2f);
+    box-shadow: 0 4px 12px rgba(31, 163, 74, 0.35);
+    position: relative;
+    z-index: 10;
+}
+
         
 
         /* ================= NAVBAR ================= */
@@ -177,7 +181,7 @@
 
         /* ================= WELCOME SECTION ================= */
         .welcome-section {
-            background-color: #fbf9f3;
+            background-color: #ffffff;
             padding: 90px 0 120px;
         }
 
@@ -252,6 +256,8 @@
             left: 50%;
             transform: translateX(-50%);
         }
+
+
         /* ================= FOOTER ================= */
 .footer-section {
     background: linear-gradient(135deg, #117428, #1e8f4a);
@@ -302,6 +308,7 @@
     font-size: 14px;
     color: #dff5e5;
 }
+
 /* ================= RESPONSIVE FIXES ================= */
 
 /* Tablets & below */
@@ -556,6 +563,564 @@
         </div>
     </div>
 </section>
+
+
+<!-- ================= OUR PRODUCTS ================= -->
+<style>
+.products-section {
+    padding: 90px 0;
+    background: linear-gradient(180deg, #c8edcb, #ffffff);
+}
+
+/* Title */
+.section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 44px;
+    color: #1b5e20;
+    text-align: center;
+    margin-bottom: 8px;
+}
+
+.section-subtitle {
+    text-align: center;
+    color: #666;
+    font-size: 16px;
+    margin-bottom: 55px;
+}
+
+/* Card Wrapper (Gradient Border) */
+.product-card {
+    border-radius: 22px;
+    padding: 2px;
+    background: linear-gradient(135deg, #66bb6a, #2e7d32);
+    transition: all 0.4s ease;
+    animation: fadeUp 0.9s ease forwards;
+}
+
+.product-card:hover {
+    transform: translateY(-14px) scale(1.03);
+}
+
+/* Inner Card */
+.product-inner {
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 16px 45px rgba(0,0,0,0.12);
+    transition: all 0.4s ease;
+}
+
+.product-card:hover .product-inner {
+    box-shadow: 0 28px 75px rgba(0,0,0,0.18);
+}
+
+/* Image */
+.product-img {
+    height: 240px;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+}
+
+.product-img::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.05), rgba(0,0,0,0.55));
+    opacity: 0;
+    transition: 0.4s ease;
+}
+
+.product-card:hover .product-img::after {
+    opacity: 1;
+}
+
+/* Body */
+.product-body {
+    padding: 22px 20px 26px;
+    text-align: center;
+}
+
+.product-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #1b5e20;
+    margin-bottom: 6px;
+}
+
+.product-price {
+    font-size: 18px;
+    font-weight: 700;
+    color: #2e7d32;
+}
+
+/* View All Button */
+.view-all-btn {
+    margin-top: 60px;
+    text-align: center;
+}
+
+.view-all-btn a {
+    padding: 15px 44px;
+    border-radius: 35px;
+    background: linear-gradient(135deg, #2e7d32, #66bb6a);
+    color: white;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-decoration: none;
+    box-shadow: 0 12px 35px rgba(46,125,50,0.4);
+    transition: all 0.35s ease;
+}
+
+.view-all-btn a:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 18px 48px rgba(46,125,50,0.55);
+}
+
+/* Animation */
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(35px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+</style>
+
+<section class="products-section">
+    <div class="container">
+
+        <h2 class="section-title">Our Products</h2>
+        <p class="section-subtitle">
+            Fresh & organic produce directly from farmers
+        </p>
+
+        <div class="row g-4 justify-content-center">
+
+            {% for product in products %}
+            <div class="col-sm-6 col-md-6 col-lg-3">
+                <div class="product-card">
+                    <div class="product-inner">
+
+                        <div class="product-img"
+                             style="background-image: url('{{ product.image.url }}');">
+                        </div>
+
+                        <div class="product-body">
+                            <h5 class="product-title">{{ product.name }}</h5>
+                            <p class="product-price">₹{{ product.price }}</p>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+
+        </div>
+
+        <div class="view-all-btn">
+            <a href="{% url 'home_product_list' %}">
+                View All Products
+            </a>
+        </div>
+
+    </div>
+</section>
+
+
+<!-- ================= DEAL OF THE DAY ================= -->
+<div class="container my-5">
+    <h2 class="text-center mb-4" style="font-family: 'Playfair Display', serif; font-size: 44px; color: #2e7d32;">
+         Deal of the Day
+    </h2>
+
+    <div id="dealCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel">
+        <div class="carousel-inner">
+
+            <!-- Slide 1: Apples -->
+            <div class="carousel-item active">
+                <div class="deal-card mx-auto position-relative">
+                    <div class="deal-bg" style="background-image: url('https://kj1bcdn.b-cdn.net/media/105439/international-eat-an-apple-a-day-2025.jpg');"></div>
+                    <div class="deal-overlay d-flex flex-column justify-content-center align-items-center text-center p-4 animate-slide">
+                        <span class="deal-badge">Deal of the Day</span>
+                        <h3 class="deal-title">Fresh Organic Apples</h3>
+                        <p class="deal-desc">Hand-picked premium apples directly from trusted farmers.</p>
+                        <div class="deal-price mb-3">
+                            <span class="old-price">₹120</span>
+                            <span class="new-price">₹102</span>
+                            <span class="discount">15% OFF</span>
+                        </div>
+                        <a href="{% url 'home_product_list' %}" class="btn deal-btn">Shop Now</a>
+                    </div>
+                    <!-- Slide controls inside the card -->
+                    <button class="carousel-control-prev" type="button" data-bs-target="#dealCarousel" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon bg-dark rounded-circle p-3"></span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#dealCarousel" data-bs-slide="next">
+                        <span class="carousel-control-next-icon bg-dark rounded-circle p-3"></span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Slide 2: Broccoli -->
+            <div class="carousel-item">
+                <div class="deal-card mx-auto position-relative">
+                    <div class="deal-bg" style="background-image: url('https://www.trees.com/wp-content/uploads/products/medium/1000/Broccolini.webp');"></div>
+                    <div class="deal-overlay d-flex flex-column justify-content-center align-items-center text-center p-4 animate-slide">
+                        <span class="deal-badge">Deal of the Day</span>
+                        <h3 class="deal-title">Fresh Broccoli</h3>
+                        <p class="deal-desc">Crisp and nutritious broccoli for your healthy meals.</p>
+                        <div class="deal-price mb-3">
+                            <span class="old-price">₹90</span>
+                            <span class="new-price">₹75</span>
+                            <span class="discount">17% OFF</span>
+                        </div>
+                        <a href="{% url 'home_product_list' %}" class="btn deal-btn">Shop Now</a>
+                    </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#dealCarousel" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon bg-dark rounded-circle p-3"></span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#dealCarousel" data-bs-slide="next">
+                        <span class="carousel-control-next-icon bg-dark rounded-circle p-3"></span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Slide 3: Banana -->
+            <div class="carousel-item">
+                <div class="deal-card mx-auto position-relative">
+                    <div class="deal-bg" style="background-image: url('https://t4.ftcdn.net/jpg/01/67/35/95/360_F_167359577_h4al3COaVMiQVglkTa0X0x2U8DqOUOk2.jpg');"></div>
+                    <div class="deal-overlay d-flex flex-column justify-content-center align-items-center text-center p-4 animate-slide">
+                        <span class="deal-badge">Deal of the Day</span>
+                        <h3 class="deal-title">Fresh Bananas</h3>
+                        <p class="deal-desc">Sweet and ripe bananas directly sourced from farms.</p>
+                        <div class="deal-price mb-3">
+                            <span class="old-price">₹60</span>
+                            <span class="new-price">₹50</span>
+                            <span class="discount">17% OFF</span>
+                        </div>
+                        <a href="{% url 'home_product_list' %}" class="btn deal-btn">Shop Now</a>
+                    </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#dealCarousel" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon bg-dark rounded-circle p-3"></span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#dealCarousel" data-bs-slide="next">
+                        <span class="carousel-control-next-icon bg-dark rounded-circle p-3"></span>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<style>
+/* Deal Card */
+.deal-card {
+    max-width: 95%;
+    height: 400px;
+    border-radius: 25px;
+    overflow: hidden;
+    position: relative;
+    margin: auto;
+    box-shadow: 0 15px 45px rgba(0,0,0,0.35);
+    transition: transform 0.5s ease, box-shadow 0.5s ease;
+}
+.deal-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 25px 60px rgba(0,0,0,0.4);
+}
+
+.deal-bg {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    filter: brightness(0.55) contrast(1.1);
+    transition: transform 0.5s ease;
+    z-index: 1;
+}
+.deal-card:hover .deal-bg {
+    transform: scale(1.05);
+}
+
+.deal-overlay {
+    position: relative;
+    z-index: 2;
+    color: #fff;
+}
+
+.deal-badge {
+    display: inline-block;
+    background-color: #28a745;
+    color: white;
+    padding: 8px 18px;
+    border-radius: 50px;
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 12px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    animation: fadeInDown 1s ease forwards;
+}
+
+.deal-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 36px;
+    margin-bottom: 12px;
+    animation: fadeInUp 1s ease 0.3s forwards;
+    opacity: 0;
+}
+
+.deal-desc {
+    font-size: 18px;
+    margin-bottom: 15px;
+    animation: fadeInUp 1s ease 0.5s forwards;
+    opacity: 0;
+}
+
+.deal-price .old-price {
+    text-decoration: line-through;
+    color: #f8d7da;
+    margin-right: 12px;
+}
+.deal-price .new-price {
+    font-weight: bold;
+    color: #fff;
+    margin-right: 10px;
+}
+.deal-price .discount {
+    color: #ffc107;
+    font-weight: bold;
+}
+
+.deal-btn {
+    background-color: #198754;
+    color: white;
+    border-radius: 10px;
+    padding: 12px 30px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+.deal-btn:hover {
+    background-color: #117428;
+}
+
+/* Carousel buttons inside card */
+.carousel-control-prev,
+.carousel-control-next {
+    width: 50px;
+    height: 50px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 3;
+}
+.carousel-control-prev {
+    left: 20px;
+}
+.carousel-control-next {
+    right: 20px;
+}
+
+/* ================== ANIMATIONS ================== */
+@keyframes fadeInUp {
+    0% {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+@keyframes fadeInDown {
+    0% {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Trigger animation when slide becomes active */
+.carousel-item .deal-overlay.animate-slide {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: slideIn 0.8s ease forwards;
+}
+.carousel-item.active .deal-overlay.animate-slide {
+    animation: slideIn 0.8s ease forwards;
+}
+
+@keyframes slideIn {
+    0% {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+</style>
+
+<!-- ================= FARMERS TESTIMONIALS ================= -->
+<style>
+.testimonial-section {
+    padding: 90px 0;
+    background: linear-gradient(180deg, #c8edcb, #ffffff);
+}
+
+.testimonial-title {
+    text-align: center;
+    font-size: 42px;
+    font-weight: 700;
+    color: #2e7d32;
+    margin-bottom: 10px;
+}
+
+.testimonial-subtitle {
+    text-align: center;
+    color: #666;
+    margin-bottom: 60px;
+    font-size: 16px;
+}
+
+/* GRID */
+.testimonial-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+    max-width: 1200px;
+    margin: auto;
+}
+
+/* CARD */
+.testimonial-card {
+    background: #ffffff;
+    border-radius: 22px;
+    box-shadow: 0 16px 40px rgba(0,0,0,0.1);
+    padding: 45px 30px;
+    text-align: center;
+    transition: all 0.4s ease;
+    animation: fadeUp 0.8s ease forwards;
+}
+
+.testimonial-card:hover {
+    transform: translateY(-12px);
+    box-shadow: 0 22px 55px rgba(0,0,0,0.15);
+}
+
+/* IMAGE */
+.testimonial-img {
+    width: 140px;
+    height: 140px;
+    margin: auto;
+    border-radius: 50%;
+    background-size: cover;
+    background-position: center;
+    border: 6px solid #e9f6ea;
+    margin-bottom: 22px;
+}
+
+/* CONTENT */
+.testimonial-card h4 {
+    font-size: 22px;
+    color: #2e7d32;
+    margin-bottom: 6px;
+}
+
+.testimonial-role {
+    font-size: 14px;
+    color: #888;
+    margin-bottom: 18px;
+}
+
+.testimonial-text {
+    font-size: 15.5px;
+    color: #444;
+    line-height: 1.7;
+}
+
+/* ANIMATION */
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(25px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* RESPONSIVE */
+@media (max-width: 992px) {
+    .testimonial-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .testimonial-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
+<section class="testimonial-section">
+    <h2 class="testimonial-title">Great Indian Farmers</h2>
+    <p class="testimonial-subtitle">Voices that shaped Indian agriculture</p>
+
+    <div class="testimonial-grid">
+
+        <!-- CARD 1 -->
+        <div class="testimonial-card">
+            <div class="testimonial-img"
+                 style="background-image:url('https://www.newsband.in/uploads/blog_main_img/a0d0893e6884e5808e79ef4a6a6c7fa6_1.jpeg');">
+            </div>
+            <h4>M. S. Swaminathan</h4>
+            <div class="testimonial-role">Father of Green Revolution</div>
+            <p class="testimonial-text">
+                Indian agriculture must focus on sustainability and farmer dignity.
+                Fair pricing and technology together ensure food security and rural growth.
+            </p>
+        </div>
+
+        <!-- CARD 2 -->
+        <div class="testimonial-card">
+            <div class="testimonial-img"
+                 style="background-image:url('https://static.toiimg.com/imagenext/toiblogs/photo/blogs/wp-content/uploads/2019/07/Subhash-Palekar.jpg');">
+            </div>
+            <h4>Subhash Palekar</h4>
+            <div class="testimonial-role">Natural Farming Pioneer</div>
+            <p class="testimonial-text">
+                Farming should work with nature, not against it.
+                Natural methods reduce costs, heal soil, and empower farmers.
+            </p>
+        </div>
+
+        <!-- CARD 3 -->
+        <div class="testimonial-card">
+            <div class="testimonial-img"
+                 style="background-image:url('https://ddmtn57ju2md7.cloudfront.net/media/avatars/cvstorganic1997@gmail.com/resized/220/BHARAT%20BHUSHAN%20PRO.png');">
+            </div>
+            <h4>Bharat Bhushan Tyagi</h4>
+            <div class="testimonial-role">Padma Shri – Organic Farming</div>
+            <p class="testimonial-text">
+                Organic farming protects future generations.
+                Direct farmer-to-consumer models create trust and fair income.
+            </p>
+        </div>
+
+    </div>
+</section>
+
+
 {% endblock %}
 
 <!-- ================= FOOTER ================= -->
@@ -577,7 +1142,7 @@
                 <h5 class="footer-heading">Quick Links</h5>
                 <ul class="footer-links">
                     <li><a href="{% url 'global_search' %}">Search</a></li>
-                    <li><a href="{% url 'product_list' %}">Products</a></li>
+                    <li><a href="{% url 'home_product_list' %}">Products</a></li>
                     <li><a href="{% url 'about' %}">About</a></li>
                 </ul>
             </div>

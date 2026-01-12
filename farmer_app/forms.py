@@ -48,7 +48,7 @@ class FarmerProfileForm(forms.ModelForm):
 
     class Meta:
         model = FarmerProfile
-        exclude = ['user', 'verified_farmer','payout_enabled', 'created_at', 'updated_at']
+        exclude = ['user', 'verified_farmer','payout_enabled', 'created_at', 'updated_at','status']
         widgets = {
             'farm_description': forms.Textarea(attrs={'rows': 4}),
             'address': forms.Textarea(attrs={'rows': 3}),

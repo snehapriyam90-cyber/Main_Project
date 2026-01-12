@@ -460,7 +460,8 @@ def admin_sales_report(request):
     # Only delivered & admin-approved order items
     order_items = OrderItem.objects.select_related('order', 'product', 'product__farmer').filter(
         order__status='delivered',
-        order__admin_approved=True
+        product__admin_approved=True   # ✅ FIXED
+
     )
 
     # -------------------------------
