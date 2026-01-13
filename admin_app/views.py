@@ -4,6 +4,8 @@ from cart_app.models import *
 from products_app.models import *
 from farmer_app.models import *
 from customer_app.models import *
+from home_app.models import *
+
 import json
 from decimal import Decimal
 
@@ -645,3 +647,11 @@ def admin_password_change(request):
         form = PasswordChangeForm(user=request.user)
 
     return render(request, "admin_password_change.html", {"form": form})
+
+@login_required
+@user_passes_test(is_admin)
+def admin_contact_queries(request):
+    queries = ContactMessage.objects.all().order_by('-created_at')
+    return render(request, 'admin_contact_queries.html', {
+        'queries': queries
+    })

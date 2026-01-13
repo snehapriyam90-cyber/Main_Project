@@ -1,0 +1,140 @@
+{% extends "admin_dashboard.html" %}
+{% block content %}
+
+<style>
+/* ================= CONTACT QUERIES ================= */
+
+.contact-wrapper {
+    padding: 30px;
+}
+
+.contact-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #1b5e20;
+    margin-bottom: 25px;
+}
+
+.query-card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 22px 24px;
+    margin-bottom: 18px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+    border-left: 6px solid #2e7d32;
+}
+
+.query-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 40px rgba(0,0,0,0.12);
+}
+
+.query-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.query-name {
+    font-size: 18px;
+    font-weight: 600;
+    color: #2e7d32;
+}
+
+.query-date {
+    font-size: 13px;
+    color: #777;
+}
+
+.query-info {
+    font-size: 14px;
+    color: #444;
+    margin-bottom: 10px;
+}
+
+.query-info span {
+    font-weight: 600;
+    color: #000;
+}
+
+.query-message {
+    background: #f6f8f7;
+    padding: 14px 16px;
+    border-radius: 10px;
+    color: #333;
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+.reply-btn {
+    margin-top: 14px;
+    text-align: right;
+}
+
+.reply-btn a {
+    padding: 8px 18px;
+    background: linear-gradient(135deg, #2e7d32, #43a047);
+    color: #fff;
+    font-size: 14px;
+    border-radius: 25px;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+.reply-btn a:hover {
+    background: linear-gradient(135deg, #1b5e20, #2e7d32);
+}
+
+/* Empty state */
+.empty-state {
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 40px;
+    text-align: center;
+    color: #777;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+}
+</style>
+
+<div class="contact-wrapper">
+
+    <h2 class="contact-title">Contact Queries</h2>
+
+    {% if queries %}
+        {% for q in queries %}
+        <div class="query-card">
+
+            <div class="query-header">
+                <div class="query-name">{{ q.name }}</div>
+                <div class="query-date">{{ q.added_on|date:"d M Y, h:i A" }}</div>
+            </div>
+
+            <div class="query-info">
+                <span>Email:</span> {{ q.email }} |
+                <span>Phone:</span> {{ q.phone }}
+            </div>
+
+            <div class="query-message">
+                {{ q.message }}
+            </div>
+
+            <div class="reply-btn">
+                <a href="#">
+                    Reply via Email
+                </a>
+            </div>
+
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="empty-state">
+            <h5>No contact queries found</h5>
+            <p>All customer messages will appear here.</p>
+        </div>
+    {% endif %}
+
+</div>
+
+{% endblock %}

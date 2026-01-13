@@ -59,6 +59,8 @@ urlpatterns = [
         views.admin_password_change,
         name="admin_password_change"
     ),
+    path('admin/contact-queries/', views.admin_contact_queries, name='admin_contact_queries'),
+
 
 
 
