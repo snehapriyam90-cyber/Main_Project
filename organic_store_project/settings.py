@@ -84,7 +84,7 @@ WSGI_APPLICATION = 'organic_store_project.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'snehapriyam$default',   # database name on PythonAnywhere
+        'NAME': 'snehapriyam$organic_store_db',   # database name on PythonAnywhere
         'USER': 'snehapriyam',                     # your PythonAnywhere username
         'PASSWORD': 'kisanfresh',                # MySQL password you set on PythonAnywhere
         'HOST': 'snehapriyam.mysql.pythonanywhere-services.com',  # host provided by PythonAnywhere
