@@ -81,20 +81,19 @@ WSGI_APPLICATION = 'organic_store_project.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASES = { 
-    'default': { 
-        'ENGINE': 'django.db.backends.mysql', 
-        'NAME': 'organic_store_db',          # Your MySQL database name 
-        'USER': 'root',             # Your MySQL username 
-        'PASSWORD': 'root',  # Your MySQL password 
-        'HOST': 'localhost',        # Usually localhost 
-        'PORT': '3306',             # Default MySQL port 
-        'OPTIONS': { 
-            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'", 
-        }, 
-    } 
-} 
-
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'snehapriyam$organic_store_db',   # database name on PythonAnywhere
+        'USER': 'snehapriyam',                     # your PythonAnywhere username
+        'PASSWORD': 'yourpassword',                # MySQL password you set on PythonAnywhere
+        'HOST': 'snehapriyam.mysql.pythonanywhere-services.com',  # host provided by PythonAnywhere
+        'PORT': '3306',
+        'OPTIONS': {
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+        },
+    }
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
