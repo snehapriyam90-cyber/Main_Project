@@ -86,7 +86,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'snehapriyam$organic_store_db',   # database name on PythonAnywhere
         'USER': 'snehapriyam',                     # your PythonAnywhere username
-        'PASSWORD': 'yourpassword',                # MySQL password you set on PythonAnywhere
+        'PASSWORD': 'kisanfresh',                # MySQL password you set on PythonAnywhere
         'HOST': 'snehapriyam.mysql.pythonanywhere-services.com',  # host provided by PythonAnywhere
         'PORT': '3306',
         'OPTIONS': {
